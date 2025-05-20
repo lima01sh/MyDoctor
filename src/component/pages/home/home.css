@@ -1,0 +1,38 @@
+
+/* .profileClinic img{
+    height: 10em;
+    width: 10em;
+} */
+.text-bluegaylight{
+    color: #689db2;
+}
+.text-bluegay{
+    color: #428196;
+}
+.bg {
+    height: 50vh;
+}
+
+.bg img {
+    object-fit: cover;
+    width: 100%;
+    height: 100%;
+}
+.logoClinic {
+    height: 25vh;
+}
+
+.logoClinic img {
+    object-fit: contain;
+    width: 100%;
+    height: 100%;
+}
+.profileClinic {
+    height: 40vh;
+}
+
+.profileClinic img {
+    object-fit: contain;
+    width: 100%;
+    height: 100%;
+}

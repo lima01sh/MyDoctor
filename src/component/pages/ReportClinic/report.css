@@ -1,0 +1,34 @@
+.card-primary{
+  background-color: #d6ecfa;  
+}
+.card-success{
+  background-color: #e2fff9;  
+}
+.card-warm{
+  background-color: #f8f0e0;  
+}
+.card-peach{
+  background-color: #fce3e3;  
+}
+.card-Lavender{
+  background-color: #E6E6FA;  
+}
+.text-warning-dark{
+  color: #d87904;  
+}
+.text-peach-dark{
+  color: #e25348;  
+}
+.text-RebeccaPurple{
+  color: #663399;  
+}
+
+.nav-underline{
+  background-color: #dfe9ff;
+}
+.nav-underline>.nav-item>button{
+  color: #1e88e5;
+}
+.nav-underline>.nav-item>.active{
+  color: #1957a3;
+}

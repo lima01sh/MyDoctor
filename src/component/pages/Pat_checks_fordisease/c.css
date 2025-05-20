@@ -1,0 +1,29 @@
+.nav-pills .nav-item .nav-link {
+    border-radius: 30px; /* ทำให้มุมของปุ่มกลม */
+    padding: 10px 20px;
+    text-transform: uppercase;
+    font-weight: 600;
+    transition: all 0.4s ease; /* ทำให้การเปลี่ยนแปลงทั้งหมดเป็นไปอย่างนุ่มนวล */
+    border-top: 2px solid transparent; /* เส้นขีดด้านบน */
+    border-bottom: 2px solid transparent; /* เส้นขีดด้านล่าง */
+  }
+  
+  /* เปลี่ยนสีของเส้นขีดเมื่อปุ่มถูกเลือก */
+  .nav-pills .nav-item .nav-link.active {
+    background-color: #007bff; /* สีของปุ่มที่ถูกเลือก */
+    color: white !important; /* สีตัวอักษรเมื่อปุ่มถูกเลือก */
+    transform: scale(1.1); /* ขยายขนาดปุ่มเมื่อถูกเลือก */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* เพิ่มเงาเมื่อเลือก */
+    border-top: 2px solid #fff; /* เปลี่ยนสีเส้นขีดด้านบนเมื่อเลือก */
+    border-bottom: 2px solid #fff; /* เปลี่ยนสีเส้นขีดด้านล่างเมื่อเลือก */
+  }
+  
+  /* เมื่อ hover เปลี่ยนสีเส้นขีด */
+  .nav-pills .nav-item .nav-link:hover {
+    background-color: #e9ecef; /* เปลี่ยนสีเมื่อผู้ใช้เอามือชี้ไปที่ปุ่ม */
+    color: #007bff; /* เปลี่ยนสีตัวอักษรเมื่อ hover */
+    transform: scale(1.05); /* ขยายขนาดเมื่อ hover */
+    border-top: 2px solid #007bff; /* เปลี่ยนสีเส้นขีดด้านบนเมื่อ hover */
+    border-bottom: 2px solid #007bff; /* เปลี่ยนสีเส้นขีดด้านล่างเมื่อ hover */
+  }
+  

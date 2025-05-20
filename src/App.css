@@ -1,0 +1,136 @@
+
+/* ใช้ฟอนต์ Kanit สำหรับ body */
+* {
+  font-family: 'Kanit', sans-serif;
+}
+
+.App {
+  text-align: center;
+  font-family: 'Kanit', sans-serif;
+  color: #424242;
+}
+.logo {
+  height: 6em;
+  padding: 1.5em;
+  will-change: filter;
+  transition: filter 300ms;
+}
+.logo:hover {
+  filter: drop-shadow(0 0 2em #646cffaa);
+}
+.logo.react:hover {
+  filter: drop-shadow(0 0 2em #61dafbaa);
+}
+
+@keyframes logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  a:nth-of-type(2) .logo {
+    animation: logo-spin infinite 20s linear;
+  }
+}
+
+
+/* ใช้ฟอนต์ Kanit สำหรับหัวข้อ */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p {
+  font-family: 'Kanit', sans-serif;
+  color: #424242;
+}
+
+@media (min-width: 1024px) {
+  .content {
+    transition: "margin-left 0.3s ease";
+    margin-left:34%;
+  }
+}
+@media (min-width: 1200px) {
+  .content {
+    transition: "margin-left 0.3s ease";
+    margin-left:32.5%;
+  }
+}
+@media (min-width: 1280px) {
+  .content {
+    transition: "margin-left 0.3s ease";
+    margin-left:30%;
+  }
+}
+@media (min-width: 1338px) {
+  .content {
+    transition: "margin-left 0.3s ease";
+    margin-left:28.5%;
+  }
+}
+@media (min-width: 1397px) {
+  .content {
+    transition: "margin-left 0.3s ease";
+    margin-left: 26%;
+  }
+}
+@media (min-width: 1500px) {
+  .content {
+    transition: "margin-left 0.3s ease";
+    margin-left: 20%;
+  }
+}
+
+.bg-main{
+  background-color: #eef2f6;
+}
+/* Dropdown Icon display */
+.dropdown-toggle::after {
+  display: none;
+}
+/* all btn btn-nav hover .btn>FontAwesomeIcon*/
+.btn.btn-nav{
+  background-color: #eef2f6;
+  color: #1565c0;
+}
+.btn.btn-nav:hover{
+  background-color: #2196f3;
+  color: #ffffff;
+}
+
+.text-titlepage-light {
+  color: #2196f3;
+}
+.text-titlepage {
+  color: #1e88e5;
+}
+.text-titlepage-drak {
+  color: #1565c0;
+}
+.text-secondary-light{
+    background-color: #eef2f6;
+}
+/* primary */
+.btn.btn-primary{
+  background-color: #2196f3;
+  border: 0;
+}
+.btn.btn-primary:hover{
+  background-color: #1565c0;
+  border: 0;
+}
+.btn.btn-outline-primary{
+  color: #2196f3;
+  border-color: #2196f3;
+}
+.btn.btn-outline-primary:hover{
+  color: #ffffff;
+  background-color: #2196f3;
+}
+

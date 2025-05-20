@@ -1,0 +1,30 @@
+.breadcrumb-item>.breadcrumb-link{
+    text-decoration: none;
+    color: #424242;
+}
+.breadcrumb-item>.breadcrumb-link:hover{
+    color: #1565c0;
+}
+.profileDef {
+    height: 20vh;
+}
+
+.profileDef img {
+    object-fit: contain;
+    width: 100%;
+    height: 100%;
+}
+.bgSide {
+    background-color: #eef2f6;
+}
+
+
+[data-column-id="6"].rdt_TableCol {
+    justify-content: center;
+}
+hr {
+    margin-bottom: 0;
+}
+.info-card>p>span{
+    color: #1e88e5;
+}

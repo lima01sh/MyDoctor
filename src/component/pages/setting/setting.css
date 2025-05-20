@@ -1,0 +1,7 @@
+.img-preview{
+    height: 20vh;
+}
+
+[data-column-id="5"],[data-column-id="4"],[data-column-id="3"].rdt_TableCol {
+    justify-content: center;
+}

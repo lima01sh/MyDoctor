@@ -1,0 +1,11 @@
+.sideNav-item {
+    background-color: #eef2f6;
+}
+.sideNav-item:hover {
+    background-color: #90caf9;
+    color: #eef2f6;
+}
+.nav-item.active {
+    background-color: #90caf9;
+    color: #ffffff;
+}
