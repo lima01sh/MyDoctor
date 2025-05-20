@@ -1,14 +1,16 @@
 import { Link, useLocation } from "react-router-dom"; // Import useLocation
+import { APi_URL_UPLOAD,Location } from "../auth/config";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faXmark } from '@fortawesome/free-solid-svg-icons'
 import "./Sidebar.css";
+import loMyCin from '../img/loMyCin.png';
 
 // eslint-disable-next-line react/prop-types
 const Sidebar = ({ isOpen, toggleSidebar }) => {
     const location = useLocation(); // Use useLocation to track the current route
     const menus =   JSON.parse(localStorage.getItem("user")); // Get user data from localStorage
-    console.log(menus.menus);
-
+    
+    const imgProfileURL = `${APi_URL_UPLOAD}${menus.img}`; // ใส่ API Key ที่นี่
   
     return (
       <div className={`d-flex`}>
@@ -20,18 +22,18 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
             </button>
             <a className="navbar-brand" href="#">
               <img
-                src="./loMyC.png"
-                height="30"
+                src={loMyCin}
+                height="35"
                 alt="Logo"
               />
-              <span className="ms-3 fs-5">ระบบจัดการคลีนิก</span>
+              {/* <span className="ms-3 fs-5">ระบบจัดการคลีนิก</span> */}
             </a>
           </div>
           <div className="offcanvas-body">
             <nav className="navbar navbar-light">
               <div className="d-flex align-items-center ms-4 mb-4">
                 <div className="position-relative">
-                  <img className="rounded-circle" src="https://www.shutterstock.com/image-vector/male-doctor-smiling-happy-face-600nw-2481032615.jpg" alt="User" style={{ width: 40, height: 40 }} />
+                  <img className="rounded-circle" src={imgProfileURL} alt="User" style={{ width: 40, height: 40 , objectFit: "cover",objectPosition: "top",}} />
                   <div className="bg-success rounded-circle border border-2 border-white position-absolute end-0 bottom-0 p-1"></div>
                 </div>
                 <div className="ms-3">

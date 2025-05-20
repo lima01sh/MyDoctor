@@ -4,7 +4,7 @@ import Login from "./component/login/Login";
 // import Uiget from "./component/pages/home/Uiget";
 import Home from "./component/pages/home/home";
 import NotFound from "./component/NotFound";
-import {Location} from "./component/auth/config"
+import {APi_URL_UPLOAD,Location} from "./component/auth/config"
 import Registration from "./component/pages/Registration/Registration";
 import PatientInfo from "./component/pages/Registration/PatientInfo";
 import PatienHistoryTake from "./component/pages/Registration/PatienHistoryTake";
@@ -36,14 +36,16 @@ import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faBars,faSliders,faCartShopping,faBell } from '@fortawesome/free-solid-svg-icons'
-
 import "./App.css";
-
+import loMyCin from './component/img/loMyCin.png';
 
 
 // eslint-disable-next-line react/prop-types
 const Layout = ({ children }) => {
   const [isSidebarOpen, setSidebarOpen] = useState(true);
+  const menus =   JSON.parse(localStorage.getItem("user")); // Get user data from localStorage
+      
+      const imgProfileURL = `${APi_URL_UPLOAD}${menus.img}`; // ใส่ API Key ที่นี่
 
   const toggleSidebar = () => {
     setSidebarOpen(!isSidebarOpen);
@@ -75,11 +77,11 @@ const Layout = ({ children }) => {
             </button>
             <a className={`navbar-brand ${isSidebarOpen ? "d-none" : "d-block"}`} href="#">
               <img
-                src="./loMyC.png"
-                height="30"
+                src={loMyCin}
+                height="35"
                 alt="Logo"
               />
-              <span className="ms-3">ระบบจัดการคลีนิก</span>
+              {/* <span className="ms-3">ระบบจัดการคลีนิก</span> */}
             </a>
             
 
@@ -100,12 +102,7 @@ const Layout = ({ children }) => {
                   data-bs-toggle="dropdown"
                   aria-expanded="false"
                 >
-                  <img
-                    src="https://www.shutterstock.com/image-vector/male-doctor-smiling-happy-face-600nw-2481032615.jpg"
-                    className="rounded-circle"
-                    height="32"
-                    alt="User Avatar"
-                  />
+                  <img className="rounded-circle" src={imgProfileURL} alt="User" style={{ width: 40, height: 40 , objectFit: "cover",objectPosition: "top",}} />
                   <FontAwesomeIcon className="fa-icon ms-3 fa-lg me-1" icon={faSliders}  />
                 </a>
                 <ul className="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
