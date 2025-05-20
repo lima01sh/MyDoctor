@@ -244,6 +244,8 @@ export default function DialogCreateRec(treatmentData) {
             text: data.message,
             icon: "success",
             confirmButtonText: "OK",
+          }).then(() => {
+            refreshPage();
           });
           //
         } else {

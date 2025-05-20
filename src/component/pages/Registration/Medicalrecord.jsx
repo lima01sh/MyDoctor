@@ -8,7 +8,22 @@ import { useFetch } from "../../auth/useGet";
 import { APi_URL_UAT } from "../../auth/config";
 
 const Medicalrecord = () => {
-
+  const location = useLocation();
+  let thcase = '';
+  let actionLink = '/';
+  let actionLinkicon = '';
+  switch (location.pathname) {
+    case '/registration':
+      thcase = 'ขึ้นทะเบียน';
+      actionLink = '/patientinfo';
+      actionLinkicon = faHospitalUser;
+      break;         
+    default:
+      thcase = 'ขึ้นทะเบียน';
+      actionLink = '/patientinfo';
+      actionLinkicon = faHospitalUser;
+  }
+  const { state } = location; 
   const [search, setSearch] = useState("");
   // check search
   const isEmpty = search === '';
@@ -65,22 +80,6 @@ const Medicalrecord = () => {
       row.thai_firstname.toLowerCase().includes(search.toLowerCase()) ||
       row.thai_lastname.toLowerCase().includes(search.toLowerCase())
   );
-
-  const location = useLocation();
-  let thcase = '';
-  let actionLink = '/';
-  let actionLinkicon = '';
-  switch (location.pathname) {
-    case '/registration':
-      thcase = 'ขึ้นทะเบียน';
-      actionLink = '/patientinfo';
-      actionLinkicon = faHospitalUser;
-      break;         
-    default:
-      thcase = 'ขึ้นทะเบียน';
-      actionLink = '/patientinfo';
-      actionLinkicon = faHospitalUser;
-  }
 
   return (
     <div>

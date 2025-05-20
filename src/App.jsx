@@ -26,6 +26,8 @@ import Treatmenthistory from "./component/pages/Registration/Treatmenthistory";
 import TreatmenthistoryInfo from "./component/pages/Registration/TreatmenthistoryInfo";
 import Medicalrecord from "./component/pages/Registration/Medicalrecord";
 import Pharmacy from "./component/pages/Pharmacy/Pharmacy";
+import PharmacyInfo from "./component/pages/Pharmacy/PharmacyInfo";
+
 import ReportClinic from "./component/pages/ReportClinic/ReportClinic";
 import { useState } from "react";
 import Sidebar from './component/layout/Sidebar';
@@ -282,6 +284,14 @@ function App() {
         element={
           <Layout isSidebarOpen={isSidebarOpen} toggleSidebar={toggleSidebar}>
             <Pharmacy />
+          </Layout>
+        }
+      />
+      <Route
+        path="/pharmacyInfo"
+        element={
+          <Layout isSidebarOpen={isSidebarOpen} toggleSidebar={toggleSidebar}>
+            <PharmacyInfo />
           </Layout>
         }
       />
