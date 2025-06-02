@@ -42,7 +42,7 @@ const Registration = () => {
               <div className="card p-4">
                 <div className="d-flex flex-column flex-md-row justify-content-between">
                 <h2 className="">รายชื่อในเวชระเบียน</h2>
-                <Link to={"/patienform"} target="_black" className="ms-3 btn btn-outline-success py-3">
+                <Link to={"/patienform"} className="ms-3 btn btn-outline-success py-3">
                     <FontAwesomeIcon icon={faHospitalUser} className="mb-2 fa-xl"/>
                     <br/><span className="fs-6 fw-light">ลงทะเบียนผู้ป่วยใหม่</span>
                 </Link>

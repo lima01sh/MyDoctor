@@ -98,44 +98,44 @@ const PatienForm = () => {
         
         const formdata = new FormData();
         formdata.append("clinic_id", clinic_id);
-        formdata.append("profile_image", File);
-        formdata.append("thai_prefix", formData.thai_prefix);
-        formdata.append("thai_firstname", formData.thai_firstname);
-        formdata.append("thai_lastname", formData.thai_lastname);
-        formdata.append("eng_prefix", formData.eng_prefix);
-        formdata.append("eng_firstname", formData.eng_firstname);
-        formdata.append("eng_lastname", formData.eng_lastname);
-        formdata.append("id_card_number", formData.id_card_number);
-        formdata.append("phone_number", formData.phone_number);
-        formdata.append("birth_date", formData.birth_date);
-        formdata.append("age", age);
-        formdata.append("blood_type", formData.blood_type);
-        formdata.append("marital_status", formData.marital_status);
-        formdata.append("gender", formData.gender);
-        formdata.append("nationality", formData.nationality);
-        formdata.append("ethnicity", formData.ethnicity);
-        formdata.append("religion", formData.religion);
-        formdata.append("address", formData.address);
-        formdata.append("district", formData.district);
-        formdata.append("province", formData.province);
-        formdata.append("zip_code", formData.zip_code);
-        formdata.append("occupation", formData.occupation);
-        formdata.append("insurance", formData.insurance);
-        formdata.append("emergency_contact_name", formData.emergency_contact_name);
-        formdata.append("emergency_contact_phone", formData.emergency_contact_phone);
+        formdata.append("profile_image", File||'');
+        formdata.append("thai_prefix", formData.thai_prefix||'');
+        formdata.append("thai_firstname", formData.thai_firstname||'');
+        formdata.append("thai_lastname", formData.thai_lastname||'');
+        formdata.append("eng_prefix", formData.eng_prefix||'');
+        formdata.append("eng_firstname", formData.eng_firstname||'');
+        formdata.append("eng_lastname", formData.eng_lastname||'');
+        formdata.append("id_card_number", formData.id_card_number||'');
+        formdata.append("phone_number", formData.phone_number||'');
+        formdata.append("birth_date", formData.birth_date||'');
+        formdata.append("age", age||'');
+        formdata.append("blood_type", formData.blood_type||'');
+        formdata.append("marital_status", formData.marital_status||'');
+        formdata.append("gender", formData.gender||'');
+        formdata.append("nationality", formData.nationality||'');
+        formdata.append("ethnicity", formData.ethnicity||'');
+        formdata.append("religion", formData.religion||'');
+        formdata.append("address", formData.address||'');
+        formdata.append("district", formData.district||'');
+        formdata.append("province", formData.province||'');
+        formdata.append("zip_code", formData.zip_code||'');
+        formdata.append("occupation", formData.occupation||'');
+        formdata.append("insurance", formData.insurance||'');
+        formdata.append("emergency_contact_name", formData.emergency_contact_name||'');
+        formdata.append("emergency_contact_phone", formData.emergency_contact_phone||'');
         formdata.append("date_of_death", formData.date_of_death || "0000-00-00");
-        formdata.append("father_name", formData.father_name);
-        formdata.append("mother_name", formData.mother_name);
-        formdata.append("residence_type", formData.residence_type);
-        formdata.append("drug_allergy", formData.drug_allergy);
-        formdata.append("treatment_right", formData.treatment_right);
-        formdata.append("sub_district", formData.sub_district);
-        formdata.append("gender_th", formData.gender_th);
-        formdata.append("related_to", formData.related_to);
-        formdata.append("house_code", formData.house_code);
-        formdata.append("contact_address", emgAddress);
-        formdata.append("data_source",formData.data_source);
-        formdata.append("congenital_disease",formData.congenital_disease);
+        formdata.append("father_name", formData.father_name||'');
+        formdata.append("mother_name", formData.mother_name||'');
+        formdata.append("residence_type", formData.residence_type||'');
+        formdata.append("drug_allergy", formData.drug_allergy||'');
+        formdata.append("treatment_right", formData.treatment_right||'');
+        formdata.append("sub_district", formData.sub_district||'');
+        formdata.append("gender_th", formData.gender_th||'');
+        formdata.append("related_to", formData.related_to||'');
+        formdata.append("house_code", formData.house_code||'');
+        formdata.append("contact_address", emgAddress||'');
+        formdata.append("data_source",formData.data_source||'');
+        formdata.append("congenital_disease",formData.congenital_disease||'');
 
         
         const requestOptions = {
@@ -251,7 +251,6 @@ const PatienForm = () => {
                                 <div className="mb-2 col-lg-2">
                                     <select
                                     className="form-select"
-                                    required
                                     name="eng_prefix"
                                     value={formData.eng_prefix||""}
                                     onChange={handleChange}
@@ -265,15 +264,14 @@ const PatienForm = () => {
                                     </select>
                                 </div>
                                 <div className="mb-2 col-lg-4">
-                                    <input type="text" className="form-control" placeholder="ชื่อ" name="eng_firstname" value={formData.eng_firstname|| ""} onChange={handleChange} required />
+                                    <input type="text" className="form-control" placeholder="ชื่อ" name="eng_firstname" value={formData.eng_firstname|| ""} onChange={handleChange}  />
                                 </div>
                                 <div className="mb-2 col-lg-4">
-                                    <input type="text" className="form-control" placeholder="นามสกุล" name="eng_lastname" value={formData.eng_lastname|| ""} onChange={handleChange} required />
+                                    <input type="text" className="form-control" placeholder="นามสกุล" name="eng_lastname" value={formData.eng_lastname|| ""} onChange={handleChange}  />
                                 </div>
                                 <div className="col-lg-2">
                                     <select
                                     className="form-select"
-                                    required
                                     name="gender"
                                     value={formData.gender || ""}
                                     onChange={handleChange}
@@ -294,7 +292,7 @@ const PatienForm = () => {
                                     <p className="mb-0 fw-normal col-form-label">อายุปัจจุบัน : </p>
                                     <input type="text" className="form-control" placeholder="อายุ" name="age" value={age || ""} onChange={handleChange} required />
                                 </div>
-
+                                {/* ต้องปรับแก้ */}
                                 <div className="col-lg-3">
                                     <p className="mb-0 fw-normal col-form-label">ที่มาของข้อมูล : </p>
                                     <select
@@ -355,15 +353,15 @@ const PatienForm = () => {
 
                                 <div className="col-lg-4">
                                     <p className="mb-0 fw-normal col-form-label">สัญชาติ : </p>
-                                    <input type="text" className="form-control" placeholder="สัญชาติ" name="nationality" value={formData.nationality||""} onChange={handleChange} required />
+                                    <input type="text" className="form-control" placeholder="สัญชาติ" name="nationality" value={formData.nationality||""} onChange={handleChange}  />
                                 </div>
                                 <div className="col-lg-4">
                                     <p className="mb-0 fw-normal col-form-label">เชื้อชาติ : </p>
-                                    <input type="text" className="form-control" placeholder="เชื้อชาติ" name="ethnicity" value={formData.ethnicity||""} onChange={handleChange} required />
+                                    <input type="text" className="form-control" placeholder="เชื้อชาติ" name="ethnicity" value={formData.ethnicity||""} onChange={handleChange}  />
                                 </div>
                                 <div className="col-lg-4">
                                     <p className="mb-0 fw-normal col-form-label">ศาสนา : </p>
-                                    <input type="text" className="form-control" placeholder="ศาสนา" name="religion" value={formData.religion||""} onChange={handleChange} required />
+                                    <input type="text" className="form-control" placeholder="ศาสนา" name="religion" value={formData.religion||""} onChange={handleChange}  />
                                 </div> 
 
                                 <div className="col-lg-4">
@@ -398,7 +396,6 @@ const PatienForm = () => {
                                     <p className="mb-0 fw-normal col-form-label">กรุ๊ปเลือด : </p>
                                     <select
                                     className="form-select"
-                                    required
                                     name="blood_type"
                                     value={formData.blood_type|| ""}
                                     onChange={handleChange}
@@ -414,13 +411,12 @@ const PatienForm = () => {
                                 </div>
                                 <div className="col-lg-3">
                                     <p className="mb-0 fw-normal col-form-label">อาชีพ : </p>
-                                    <input type="text" className="form-control" placeholder="อาชีพ" name="occupation" value={formData.occupation|| ""} onChange={handleChange} required />
+                                    <input type="text" className="form-control" placeholder="อาชีพ" name="occupation" value={formData.occupation|| ""} onChange={handleChange}  />
                                 </div>
                                 <div className="col-lg-3">
                                     <p className="mb-0 fw-normal col-form-label">สถานะสมรถ : </p>
                                     <select
                                     className="form-select"
-                                    required
                                     name="marital_status"
                                     value={formData.marital_status||""}
                                     onChange={handleChange}
@@ -438,27 +434,27 @@ const PatienForm = () => {
                                 
                                 <div className="col-lg-6">
                                     <p className="mb-0 fw-normal col-form-label">ชื่อ-สกุล (บิดา) : </p>
-                                    <input type="text" className="form-control" placeholder="ชื่อ-สกุล (บิดา)" name="father_name" value={formData.father_name||  ""} onChange={handleChange} required />
+                                    <input type="text" className="form-control" placeholder="ชื่อ-สกุล (บิดา)" name="father_name" value={formData.father_name||  ""} onChange={handleChange} />
                                 </div>
                                 <div className="col-lg-6">
                                     <p className="mb-0 fw-normal col-form-label">ชื่อ-สกุล (มารดา) : </p>
-                                    <input type="text" className="form-control" placeholder="ชื่อ-สกุล (มารดา)" name="mother_name" value={formData.mother_name|| ""} onChange={handleChange} required />
+                                    <input type="text" className="form-control" placeholder="ชื่อ-สกุล (มารดา)" name="mother_name" value={formData.mother_name|| ""} onChange={handleChange} />
                                 </div>
                                 <div className="col-lg-4">
                                     <p className="mb-0 fw-normal col-form-label">ชื่อ-สกุล (ผู้ติดต่อได้) : </p>
-                                    <input type="text" className="form-control" placeholder="ชื่อ-สกุล (ผู้ติดต่อได้)" name="emergency_contact_name" value={formData.emergency_contact_name||""} onChange={handleChange} required />
+                                    <input type="text" className="form-control" placeholder="ชื่อ-สกุล (ผู้ติดต่อได้)" name="emergency_contact_name" value={formData.emergency_contact_name||""} onChange={handleChange} />
                                 </div>
                                 <div className="col-lg-4">
                                     <p className="mb-0 fw-normal col-form-label">เกี่ยวข้องเป็น : </p>
-                                    <input type="text" className="form-control" placeholder="เกี่ยวข้องเป็น" name="related_to" value={formData.related_to||""} onChange={handleChange} required />
+                                    <input type="text" className="form-control" placeholder="เกี่ยวข้องเป็น" name="related_to" value={formData.related_to||""} onChange={handleChange} />
                                 </div>
                                 <div className="col-lg-4">
                                     <p className="mb-0 fw-normal col-form-label">รหัสบ้านตามกรมปกครอง : </p>
-                                    <input type="text" className="form-control" placeholder="รหัสบ้านตามกรมปกครอง" name="house_code" value={formData.house_code||""} onChange={handleChange} required />
+                                    <input type="text" className="form-control" placeholder="รหัสบ้านตามกรมปกครอง" name="house_code" value={formData.house_code||""} onChange={handleChange} />
                                 </div>
                                 <div className="col-lg-3">
                                     <p className="mb-0 fw-normal col-form-label">ลักษณะที่อยู่อาศัย : </p>
-                                    <input type="text" className="form-control" placeholder="ลักษณะที่อยู่อาศัย" name="residence_type" value={formData.residence_type|| ""} onChange={handleChange} required />
+                                    <input type="text" className="form-control" placeholder="ลักษณะที่อยู่อาศัย" name="residence_type" value={formData.residence_type|| ""} onChange={handleChange} />
                                 </div>
                                 <div className="col-lg-6">
                                     <p className="mb-0 fw-normal col-form-label">ที่อยู่ผู้ติดต่อได้ : </p>
@@ -481,25 +477,25 @@ const PatienForm = () => {
                                     <p className="mb-0 fw-normal col-form-label">เบอร์โทรผู้ติดต่อได้ : </p>
                                     <div className="input-group mb-3">
                                         <span className="input-group-text"><FontAwesomeIcon icon={faPhone} /></span>
-                                            <input type="text" className="form-control" placeholder="เบอร์โทรผู้ติดต่อได้" name="emergency_contact_phone" value={formData.emergency_contact_phone||""} onChange={handleChange} required />
+                                            <input type="text" className="form-control" placeholder="เบอร์โทรผู้ติดต่อได้" name="emergency_contact_phone" value={formData.emergency_contact_phone||""} onChange={handleChange} />
                                     </div>
                                 </div>
                                 <div className="col-lg-6 mt-2">
                                     <p className="mb-0 fw-normal col-form-label fw-semibold">โรคประจำตัว : </p>
-                                    <input type="text" className="form-control" placeholder="โรคประจำตัว" name="congenital_disease" value={formData.congenital_disease|| ""} onChange={handleChange} required />
+                                    <input type="text" className="form-control" placeholder="โรคประจำตัว" name="congenital_disease" value={formData.congenital_disease|| ""} onChange={handleChange} />
                                 </div>
                                 <div className="col-lg-6 mt-2">
                                     <p className="mb-0 fw-normal col-form-label fw-semibold">ประวัติการแพ้ยา : </p>
-                                    <input type="text" className="form-control" placeholder="แพ้ยา" name="drug_allergy" value={formData.drug_allergy||""} onChange={handleChange} required />
+                                    <input type="text" className="form-control" placeholder="แพ้ยา" name="drug_allergy" value={formData.drug_allergy||""} onChange={handleChange} />
                                 </div>
                                 <div className="col-lg-9 mt-2">
                                     <p className="mb-0 fw-normal col-form-label fw-semibold">สิทธิการรักษา : </p>
                                     <div className="row d-flex">
                                         <div className="col-12 col-md-3 mb-2 mb-md-0">
-                                        <input type="text" className="form-control" placeholder="Code" name="treatment_right" value={formData.treatment_right|| ""} onChange={handleChange} required />
+                                        <input type="text" className="form-control" placeholder="Code" name="treatment_right" value={formData.treatment_right|| ""} onChange={handleChange} />
                                         </div>
                                         <div className="col-12 col-md-9 mb-2 mb-md-0">
-                                        <input type="text" className="form-control" placeholder="ชื่อสิทธิการรักษา" name="insurance" value={formData.insurance|| ""} onChange={handleChange} required />
+                                        <input type="text" className="form-control" placeholder="ชื่อสิทธิการรักษา" name="insurance" value={formData.insurance|| ""} onChange={handleChange} />
                                         </div>
                                     </div>
                                 </div>

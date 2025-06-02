@@ -271,7 +271,7 @@ const Pharmacy = () => {
 
     return (
         <div>
-            <div className="p-4 mb-5 ">
+            <div className="p-4 mb-0">
                 <h2 className="text-start display-6 fw-semibold text-titlepage">เภสัชกรรม</h2>
                 <nav aria-label="breadcrumb" className="bg-light rounded-2 px-3 p-2">
                     <ol className="breadcrumb mb-0">
