@@ -24,24 +24,46 @@ const Setting = () => {
   }
   // tABLE
   const customStyles = {
+    tableWrapper: {
+        style: {
+          borderRadius: '5px', // 👈 ขอบโค้ง
+          overflow: 'hidden',   // ✅ บังคับให้มุมโค้งทำงาน
+        },
+    },
+    table: {
+        style: {
+            borderRadius: '5px',
+            border: 'none',
+        },
+    },
     rows: {
-      style: {
-        minHeight: '60px', // override the row height
-      },
+        style: {
+            marginTop:'3px',
+            marginBottom:'3px',
+            minHeight: '50px',
+            borderBottom: 'none',
+            backgroundColor: '#ffffff',
+        },
     },
     headCells: {
-      style: {
-        fontSize: '16px',
-        fontWeight: 'bold',
-        backgroundColor: '#CCE5FF',
-      },
+        style: {
+            backgroundColor: '#E9F2FB',
+            fontSize: '16px',
+            fontWeight: 'bold',
+            justifyContent: 'center',  // ✅ ใช้ที่นี่
+            display: 'flex',           // ✅ สำคัญเพื่อให้ flex ทำงาน
+            alignItems: 'center',      // ✅ ถ้าอยากให้อยู่กลางแนวตั้งด้วย
+            color: '#547694',
+        },
     },
     cells: {
-      style: {
-        fontSize: '16px',
-      },
+        style: {
+            fontSize: '16px',
+            border: 'none',
+            justifyContent:'center',
+        },
     },
-  };
+};
   const paginationComponentOptions = {
       selectAllRowsItem: true,
       selectAllRowsItemText: 'Alls',
@@ -307,13 +329,14 @@ const Setting = () => {
                 </div>
               </div>
             </div>
-            <div className="card">
+            <div className="">
               <DataTable columns={columns} data={filteredPatients} 
                 customStyles={customStyles}
                 pagination
                 paginationComponentOptions={paginationComponentOptions}
                 highlightOnHover
                 pointerOnHover
+                keyField="id"
               />
             </div>
           </div>

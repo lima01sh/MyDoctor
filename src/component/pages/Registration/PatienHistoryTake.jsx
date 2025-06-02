@@ -27,46 +27,20 @@ const PatienHistoryTake = () => {
     const apiKey = localStorage.getItem("token"); // ใส่ API Key ที่นี่
     // steps
     const steps = [
-    {
-        label: 'ซักประวัติ',
-        description: `ข้อมูลผู้ป่วย`,
-    },
-    {
-        label: 'บล็อกยา/กรณีแพ้ยา',
-        description:
-        'บล็อกยา/กรณีแพ้ยาของผู้ป่วย',
-    },
-    {
-        label: 'ขึ้นทะเบียนรักษา',
-        description: `รับคิวรักษา`,
-    },
+        {
+            label: 'ซักประวัติ',
+            description: `ข้อมูลผู้ป่วย`,
+        },
+        {
+            label: 'บล็อกยา/กรณีแพ้ยา',
+            description:
+            'บล็อกยา/กรณีแพ้ยาของผู้ป่วย',
+        },
+        {
+            label: 'ขึ้นทะเบียนรักษา',
+            description: `รับคิวรักษา`,
+        },
     ];
-    const [activeStep, setActiveStep] = React.useState(0);
-    const handleNext = () => {
-        setActiveStep((prevActiveStep) => prevActiveStep + 1);
-    };
-
-    const handleBack = () => {
-        setActiveStep((prevActiveStep) => prevActiveStep - 1);
-    };
-
-    const handleReset = () => {
-        setActiveStep(0);
-    };
-    // steps
-
-    // case Submit
-    const navigate = useNavigate('');
-
-    const apiUrl = `${APi_URL_UAT}Pat_checks_fordisease`;
-    const apiUrlQ = `${APi_URL_UAT}add_queue`;
-    const apiUrlBlockmedi = `${APi_URL_UAT}drug_allergy`;
-
-
-    function refreshPage() {
-        window.location.reload(false);
-    }
-
     const [isChecked, setIsChecked] = useState('active');
     const [selectedOption, setSelectedOption] = useState('ไม่แพ้ยา');
 
@@ -75,6 +49,7 @@ const PatienHistoryTake = () => {
         setIsChecked(!isChecked)
     };
 
+    const [activeStep, setActiveStep] = useState(0)
     const [formData, setFormData] = useState({
         temp: "", 
         pulse: "",
@@ -91,34 +66,11 @@ const PatienHistoryTake = () => {
         visitReason: "",
     });
 
-    const [isActive, setIsActive] = useState('');
-    // console.log("Active"+isActive);
+    const isFormFilled = Object.values(formData).some(value => value.trim() !== '')
+
     const handleChange = (e) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value || ""  });
-    };
-
-    const [weight, setWeight] = useState('');
-    const [height, setHeight] = useState('');
-    const [bmi, setBmi] = useState(null);
-
-    const calculateBmi = () => {
-        console.log(weight);
-        console.log(height);
-        if (!weight || !height) {
-            Swal.fire({
-                title: "คำแนะนำ!",
-                text: "เพิ่มข้อมูลน้ำหนักส่วนสูง เพื่อคำนวนค่า BMI!",
-                icon: "info",
-                showCancelButton: false,
-                confirmButtonText: "เข้าใจแล้ว",
-                });
-            return;
-        }
-
-        const heightInMeters = parseFloat(height) / 100;
-        const bmiValue = (parseFloat(weight) / (heightInMeters * heightInMeters)).toFixed(2);
-        setBmi(bmiValue);
-    };
+        setFormData({ ...formData, [e.target.name]: e.target.value || "" })
+    }
 
     const name = state.thai_prefix+" "+state.thai_firstname+" "+state.thai_lastname; 
     const type = "ผู้ป่วย";
@@ -129,10 +81,13 @@ const PatienHistoryTake = () => {
         const printUrl = `https://www.addpay.co.th/service-ui/service-my-clinic/service-my-monitor/QueueCard/?queue_no=${dataQ.queue_number}&hn=${hn_patient_id}&name=${name}&type=${type}&date=${date}&time=${time}`;
         const printWindow = window.open(printUrl, '_blank', 'width=600,height=400');
     };
+    
+    const apiUrl = `${APi_URL_UAT}Pat_checks_fordisease`;
+    const apiUrlQ = `${APi_URL_UAT}add_queue`;
 
-    const handleSubmit = (e) => {
+    const handleMainSubmit = (e) => {
         e.preventDefault();
-
+        
         const myHeadersQ = new Headers();
         myHeadersQ.append("Content-Type", "application/json");
         myHeadersQ.append("X-API-KEY", apiKey);
@@ -181,8 +136,8 @@ const PatienHistoryTake = () => {
                 });
             }})
         .catch((error) => console.error(error));
+    }
 
-    };
     const historyTakeSave =(id)=>{
         console.log("บันทึกข้อมูล:", { 
         temp: formData.temp || "", 
@@ -251,11 +206,7 @@ const PatienHistoryTake = () => {
             icon: "success",
             showCancelButton: false,
             confirmButtonText: "OK",
-            }).then((result) => {
-            if (result.isConfirmed) {
-                setIsActive('d-none');
-                // setQueue_id(queue_id)
-            }});
+            });
         } else {
             Swal.fire({
             title: "Error!",
@@ -269,23 +220,47 @@ const PatienHistoryTake = () => {
         .catch((error) => console.error(error));
 
         // รีเซ็ตค่า form หลังบันทึก
-        setFormData({ 
-            temp: "", 
-            pulse: "",
-            respiration: "",
-            bpSystolic: "",
-            bpDiastolic: "",
-            tbStatus: "",
-            eyeExam: "",
-            screening: "",
-            alcoholStatus: "",
-            smokingStatus: "",
-            pregnancyStatus: "",
-            gfrStatus: "",
-            visitReason: "",
-        });
+        // setFormData({ 
+        //     temp: "", 
+        //     pulse: "",
+        //     respiration: "",
+        //     bpSystolic: "",
+        //     bpDiastolic: "",
+        //     tbStatus: "",
+        //     eyeExam: "",
+        //     screening: "",
+        //     alcoholStatus: "",
+        //     smokingStatus: "",
+        //     pregnancyStatus: "",
+        //     gfrStatus: "",
+        //     visitReason: "",
+        // });
+        
+        setActiveStep(3)
     }
 
+    const [weight, setWeight] = useState('');
+    const [height, setHeight] = useState('');
+    const [bmi, setBmi] = useState(null);
+
+    const calculateBmi = () => {
+        console.log(weight);
+        console.log(height);
+        if (!weight || !height) {
+            Swal.fire({
+                title: "คำแนะนำ!",
+                text: "เพิ่มข้อมูลน้ำหนักส่วนสูง เพื่อคำนวนค่า BMI!",
+                icon: "info",
+                showCancelButton: false,
+                confirmButtonText: "เข้าใจแล้ว",
+                });
+            return;
+        }
+
+        const heightInMeters = parseFloat(height) / 100;
+        const bmiValue = (parseFloat(weight) / (heightInMeters * heightInMeters)).toFixed(2);
+        setBmi(bmiValue);
+    };
 
     // Block
     // fatch
@@ -358,6 +333,7 @@ const PatienHistoryTake = () => {
     setFormDrugData({ ...formDrugData, [e.target.name]: e.target.value });
     };
 
+    const apiUrlBlockmedi = `${APi_URL_UAT}drug_allergy`;
     const handleDrugSubmit = (e) => {
         e.preventDefault();
         console.log(formDrugData);
@@ -418,514 +394,535 @@ const PatienHistoryTake = () => {
         }
         })
         .catch((error) => console.error(error));
+
+        setActiveStep(1)
     };
 
+    const nextStep = () => {
+        setActiveStep((prev) => prev + 1)
+    }
+    const nextSteptosub = (e) => {
+        e.preventDefault()
+        console.log('Step 1 Data Saved:', formData)
+        setActiveStep(2)
+    }
+
+    const prevStep = () => {
+        setActiveStep((prev) => prev - 1)
+    }
+
     return (
-        <div>
-            <div className="p-4 mb-5 ">
-                <h2 className="text-start display-6 fw-semibold text-titlepage">ซักประวัติ</h2>
-                <nav aria-label="breadcrumb" className="bg-light rounded-2 px-3 p-2">
-                    <ol className="breadcrumb mb-0">
-                        <li className="breadcrumb-item"><Link to="/registration" className="breadcrumb-link"><FontAwesomeIcon className="me-1" icon={faAddressCard} />เวชระเบียน</Link></li>
-                        <li className="breadcrumb-item"><Link to="/patientinfo" 
-                        state={{hn_patient_id: hn_patient_id,
-                            thai_prefix: state.thai_prefix,
-                            thai_firstname: state.thai_firstname,
-                            thai_lastname: state.thai_lastname,
-                        }} className="breadcrumb-link"><FontAwesomeIcon className="me-1" icon={faHospitalUser} />ข้อมูลผู้ป่วย</Link></li>
-                        <li className="breadcrumb-item mb-0 active" aria-current="page"><FontAwesomeIcon className="me-1" icon={faFileWaveform} />ซักประวัติ</li>
-                    </ol>
-                </nav>
-                <div className="mt-5">
-                    <div className="card">
-                        <div className="card-header fs-5 fw-semibold">
-                            รหัสผู้ป่วย : {hn_patient_id}
-                        </div>
-                        <div className="card-body pt-5">
-                            <Box sx={{ width: '100%' }}>
-                                <Stepper activeStep={activeStep} alternativeLabel>
-                                    {steps.map((step, index) => {
-                                    const stepProps = {};
-                                    const labelProps = {};
-                                    return (
-                                        <Step key={step.label} {...stepProps}>
-                                        <StepLabel {...labelProps}>
-                                            <p className="mb-0 fs-6">{step.label}</p>
-                                            </StepLabel>
-                                        </Step>
-                                    );
-                                    })}
-                                </Stepper>
-                                 
-                                {activeStep === steps.length ? (
-                                    <React.Fragment>
-                                        <p sx={{ mt: 2, mb: 1 }}>
-                                            All steps completed - you&apos;re finished
-                                        </p>
-                                        <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
-                                            <Box sx={{ flex: '1 1 auto' }} />
-                                            <Link to="/registration" onClick={handleReset} className="btn btn-nav">กลับเวชระเบียน</Link>
-                                        </Box>
-                                    </React.Fragment>
-                                ) : (
-                                    <React.Fragment>
-                                        <Box sx={{ display: 'flex', flexDirection: 'row', pt: 1 }}>
-                                            <Button
-                                            color="inherit"
-                                            disabled={activeStep === 0}
-                                            onClick={handleBack}
-                                            sx={{ mr: 1 }}
-                                            className="btn btn-nav"
-                                            >
-                                            Back
-                                            </Button>
-                                            <Box sx={{ flex: '1 1 auto' }} />
-                                            
-                                            {activeStep === steps.length - 1 ? 
-                                            ""
-                                            : <Button onClick={handleNext} className="btn btn-nav">Next</Button>
-                                            }
-                                            
-                                        </Box>
-                                        <hr className="mt-12 mb-5"/>
-                                        <Box> 
-                                           
-                                            {activeStep === 0?(
-                                                <div className="mb-3">
-                                                    <div className={`${isActive}`}>
-                                                        <form onSubmit={handleSubmit}>
-                                                            <div className="row g-3">
-                                                                <div className="row d-flex flex-column flex-md-row-reverse">
-                                                                    <div className="col-12">
-                                                                        <p className="text-center fs-4 text-titlepage">ข้อมูลผู้ป่วย</p>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <div className="row">
-                                                                <div className="col-lg-3">
-                                                                    <p className="mb-0 fw-normal col-form-label">น้ำหนัก (BW) :</p>
-                                                                    <div className="input-group">
-                                                                        <input type="number" className="form-control" name="bw" step="any" min="0"
-                                                                        value={weight||""} 
-                                                                        onChange={(e) => setWeight(e.target.value)} required />
-                                                                        <span className="input-group-text">kg</span>
-                                                                    </div>
-                                                                </div>
-                                                                <div className="col-lg-3">
-                                                                    <p className="mb-0 fw-normal col-form-label">ส่วนสูง (Height) :</p>
-                                                                    <div className="input-group">
-                                                                        <input type="number" className="form-control" name="height" min="0"
-                                                                        value={height||""} 
-                                                                        onChange={(e) => setHeight(e.target.value)} required />
-                                                                        <span className="input-group-text">cm</span>
-                                                                    </div>
-                                                                </div>
-                                                                <div className="col-lg-3">
-                                                                    <p className="mb-0 fw-normal col-form-label ">ดัชนีมวลกาย (BMI) : </p>
-                                                                    <div className="input-group mb-3">
-                                                                        <button className="btn btn-primary" type="button" onClick={calculateBmi}>คำนวน</button>
-                                                                        <input type="number" className="form-control text-end" name="bmi" step="any" disabled
-                                                                            value={bmi||""} onChange={handleChange} required />
-                                                                    </div>
-                                                                </div>
-                                                                <div className="col-lg-3">
-                                                                    <p className="mb-0 fw-normal col-form-label">อุณหภูมิร่างกาย (Temp) : </p>
-                                                                    <div className="input-group">
-                                                                        <input type="number" className="form-control ms-auto" name="temp" step="any" 
-                                                                        value={formData.temp} onChange={handleChange} required />
-                                                                        <span className="input-group-text">°C</span>
-                                                                    </div>
-                                                                </div>
-                                                                <div className="col-lg-3">
-                                                                    <p className="mb-0 fw-normal col-form-label">ชีพจร (Pulse) : </p>
-                                                                    <div className="input-group">
-                                                                        <input type="number" className="form-control" name="pulse" step="any"
-                                                                        value={formData.pulse} onChange={handleChange} required />
-                                                                        <span className="input-group-text">ครั้งต่อนาที</span>
-                                                                    </div>
-                                                                </div>
-                                                                <div className="col-lg-3">
-                                                                    <p className="mb-0 fw-normal col-form-label">การหายใจ (Respiration) : </p>
-                                                                    <div className="input-group">
-                                                                        <input type="number" className="form-control" name="respiration" step="any"
-                                                                        value={formData.respiration} onChange={handleChange} required />
-                                                                        <span className="input-group-text">ครั้งต่อนาที</span>
-                                                                    </div>
-                                                                </div>
-                                                                <div className="col-lg-3">
-                                                                    <p className="mb-0 fw-normal col-form-label">ความดันโลหิตซิสโตลิก (BP Systolic) : </p>
-                                                                    <div className="input-group">
-                                                                        <input type="number" className="form-control" name="bpSystolic" step="any"
-                                                                        value={formData.bpSystolic} onChange={handleChange} required />
-                                                                        <span className="input-group-text">มิลลิเมตรปรอท</span>
-                                                                    </div>
-                                                                </div>
-                                                                <div className="col-lg-3">
-                                                                    <p className="mb-0 fw-normal col-form-label">ความดันโลหิตไดแอสโตลิก (BP Diastolic) : </p>
-                                                                    <div className="input-group">
-                                                                        <input type="number" className="form-control" name="bpDiastolic" step="any"
-                                                                        value={formData.bpDiastolic} onChange={handleChange} required />
-                                                                        <span className="input-group-text">มิลลิเมตรปรอท</span>
-                                                                    </div>
-                                                                </div>
-                                                                <div className="col-lg-4">
-                                                                    <p className="mb-0 fw-normal col-form-label ">สถานะวัณโรค (TB Status) : </p>
-                                                                    <select
-                                                                    className="form-select"
-                                                                    required
-                                                                    name="tbStatus"
-                                                                    value={formData.tbStatus}
-                                                                    onChange={handleChange}
-                                                                    >
-                                                                        <option  value="" selected disabled>
-                                                                            เลือก
-                                                                        </option>
-                                                                        <option value="ไม่เป็นวัณโรค">ไม่เป็นวัณโรค</option>
-                                                                        <option value="เป็นวัณโรค">เป็นวัณโรค</option>
-                                                                    </select>
-                                                                </div>
-                                                                <div className="col-lg-4">
-                                                                    <p className="mb-0 fw-normal col-form-label ">การตรวจตา (Eye Exam) : </p>
-                                                                    <input type="text" className="form-control" name="eyeExam"
-                                                                    value={formData.eyeExam} onChange={handleChange} required />
-                                                                </div>
-                                                                <div className="col-lg-4">
-                                                                    <p className="mb-0 fw-normal col-form-label ">การคัดกรอง (Screening) : </p>
-                                                                    {/* <input type="text" className="form-control" name="screening"
-                                                                    value={formData.screening||""} onChange={handleChange} required /> */}
-                                                                    <select
-                                                                    className="form-select"
-                                                                    required
-                                                                    name="screening"
-                                                                    value={formData.screening}
-                                                                    onChange={handleChange}
-                                                                    >
-                                                                        <option  value="" selected disabled>
-                                                                            เลือก
-                                                                        </option>
-                                                                        <option value="ไม่ผ่าน">ไม่ผ่าน</option>
-                                                                        <option value="ผ่าน">ผ่าน</option>
-                                                                    </select>
-                                                                </div>
-                                                                <div className="col-lg-4">
-                                                                    <p className="mb-0 fw-normal col-form-label ">สถานะการดื่มแอลกอฮอล์ (Alcohol Status) : </p>
-                                                                    <select
-                                                                    className="form-select"
-                                                                    required
-                                                                    name="alcoholStatus"
-                                                                    value={formData.alcoholStatus}
-                                                                    onChange={handleChange}
-                                                                    >
-                                                                        <option  value="" selected disabled>
-                                                                            เลือก
-                                                                        </option>
-                                                                        <option value="ไม่ดื่ม">ไม่ดื่ม</option>
-                                                                        <option value="ดื่ม">ดื่ม</option>
-                                                                    </select>
-                                                                </div>
-                                                                <div className="col-lg-4">
-                                                                    <p className="mb-0 fw-normal col-form-label ">สถานะการสูบบุหรี่ (Smoking Status) : </p>
-                                                                    <select
-                                                                    className="form-select"
-                                                                    required
-                                                                    name="smokingStatus"
-                                                                    value={formData.smokingStatus}
-                                                                    onChange={handleChange}
-                                                                    >
-                                                                        <option  value="" selected disabled>
-                                                                            เลือก
-                                                                        </option>
-                                                                        <option value="ไม่สูบบุหรี่">ไม่สูบบุหรี่</option>
-                                                                        <option value="สูบบุหรี่">สูบบุหรี่</option>
-                                                                    </select>
-                                                                </div>
-                                                                <div className="col-lg-4">
-                                                                    <p className="mb-0 fw-normal col-form-label ">สถานะการตั้งครรภ์ (Pregnancy Status) : </p>
-                                                                    <select
-                                                                    className="form-select"
-                                                                    required
-                                                                    name="pregnancyStatus"
-                                                                    value={formData.pregnancyStatus}
-                                                                    onChange={handleChange}
-                                                                    >
-                                                                        <option  value="" selected disabled>
-                                                                            เลือก
-                                                                        </option>
-                                                                        <option value="ไม่ตั้งครรภ์">ไม่ตั้งครรภ์</option>
-                                                                        <option value="ตั้งครรภ์">ตั้งครรภ์</option>
-                                                                    </select>
-                                                                </div>
-                                                                <div className="col-lg-4">
-                                                                    <p className="mb-0 fw-normal col-form-label ">สถานะการกรองของไต (GFR Status) : </p>
-                                                                    <input type="text" className="form-control" name="gfrStatus"
-                                                                    value={formData.gfrStatus} onChange={handleChange} required />
-                                                                </div>
-                                                                <div className="col-lg-8">
-                                                                    <p className="mb-0 fw-normal col-form-label ">สาเหตุที่ผู้ป่วยมาใช้บริการ (Visit Reason) : </p>
-                                                                    <input type="text" className="form-control" name="visitReason"
-                                                                    value={formData.visitReason} onChange={handleChange} required />
-                                                                </div>
-                                                                <div className="col-lg-8">
-                                                                    <p className="mb-0 fw-normal col-form-label ">การแพ้ยา (Drug Allergy) : </p>
-                                                                    {selectedOption === 'ไม่แพ้ยา' && (
-                                                                    <div className="btn-group mt-3">
-                                                                        <label className="btn btn-primary px-5" >
-                                                                            <input className="btn-check active"  type="radio" 
-                                                                            value="ไม่แพ้ยา"
-                                                                            checked={selectedOption === 'ไม่แพ้ยา'}
-                                                                            onChange={handleOptionChange} /> 
-                                                                            ไม่แพ้ยา
-                                                                        </label>
-                                                                        <label className="btn btn-outline-primary px-5" >
-                                                                            <input className="btn-check" type="radio" 
-                                                                            value="แพ้ยา"
-                                                                            checked={selectedOption === 'แพ้ยา'}
-                                                                            onChange={handleOptionChange}  />
-                                                                            แพ้ยา
-                                                                        </label>
-                                                                    </div>
-                                                                    )}
+    <div>
+        <div className="p-4 mb-5 ">
+            <h2 className="text-start display-6 fw-semibold text-titlepage">ซักประวัติ</h2>
+            <nav aria-label="breadcrumb" className="bg-light rounded-2 px-3 p-2">
+                <ol className="breadcrumb mb-0">
+                    <li className="breadcrumb-item"><Link to="/registration" className="breadcrumb-link"><FontAwesomeIcon className="me-1" icon={faAddressCard} />เวชระเบียน</Link></li>
+                    <li className="breadcrumb-item"><Link to="/patientinfo" 
+                    state={{hn_patient_id: hn_patient_id,
+                        thai_prefix: state.thai_prefix,
+                        thai_firstname: state.thai_firstname,
+                        thai_lastname: state.thai_lastname,
+                    }} className="breadcrumb-link"><FontAwesomeIcon className="me-1" icon={faHospitalUser} />ข้อมูลผู้ป่วย</Link></li>
+                    <li className="breadcrumb-item mb-0 active" aria-current="page"><FontAwesomeIcon className="me-1" icon={faFileWaveform} />ซักประวัติ</li>
+                </ol>
+            </nav>
+            <div className="mt-5">
+                <div className="card">
+                    <div className="card-header fs-5 fw-semibold">
+                        รหัสผู้ป่วย : {hn_patient_id}
+                    </div>
+                    <div className="card-body pt-5">
+                        <Box sx={{ width: '100%' }}>
+                            <Stepper activeStep={activeStep} alternativeLabel>
+                                {steps.map((step, index) => {
+                                const stepProps = {};
+                                const labelProps = {};
+                                return (
+                                    <Step key={step.label} {...stepProps}>
+                                    <StepLabel {...labelProps}>
+                                        <p className="mb-0 fs-6">{step.label}</p>
+                                        </StepLabel>
+                                    </Step>
+                                );
+                                })}
+                            </Stepper>
 
-                                                                    {selectedOption === 'แพ้ยา' && (
-                                                                    <div className="btn-group mt-3">
-                                                                        <label className="btn btn-outline-primary px-5" >
-                                                                            <input className="btn-check active"  type="radio" 
-                                                                            value="ไม่แพ้ยา"
-                                                                            checked={selectedOption === 'ไม่แพ้ยา'}
-                                                                            onChange={handleOptionChange} /> 
-                                                                            ไม่แพ้ยา
-                                                                        </label>
-                                                                        <label className="btn btn-primary px-5" >
-                                                                            <input className="btn-check" type="radio" 
-                                                                            value="แพ้ยา"
-                                                                            checked={selectedOption === 'แพ้ยา'}
-                                                                            onChange={handleOptionChange}  />
-                                                                            แพ้ยา
-                                                                        </label>
-                                                                    </div>
-                                                                    )}
-                                                                </div>
-                                                            </div>
-                                                            <div className="mt-4">
-                                                                <div className="text-center">
-                                                                    <p>กรุณาตรวจสอบความถูกต้องของข้อมูล</p>
-                                                                    <p>หากข้อมูลครบถ้วน <span className="text-primary">กรุณาคลิกที่ปุ่ม "ขึ้นทะเบียนรักษา"</span></p>
-                                                                </div>
-                                                                <div className="mb-3">
-                                                                    <div className="col-12 text-center mt-5">
-                                                                        <div className="d-grid gap-2 col-6 mx-auto">
-                                                                            <button type="submit" className="btn btn-primary py-2"><FontAwesomeIcon icon={faHospitalUser} className="me-2" />ขึ้นทะเบียนรักษา</button>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </form>
-                                                    </div>
-                                                       
-                                                    <div className={`${isActive?`d-block`:`d-none`}`}>
-                                                        <div className="text-center">
-                                                            <p>ขึ้นทะเบียนรักษาสำเร็จ ดำเนินการขั้นตอนถัดไป</p>
-                                                        </div>
+                        </Box>
+                
+                        <div className="mt-4">
+                        <hr className="mt-12 mb-5"/>
+                        {activeStep === 0 && (
+                            <form onSubmit={(e) => { e.preventDefault(); setActiveStep(1) }}>
+                                <div className="row g-3">
+                                    <div className="row d-flex flex-column flex-md-row-reverse">
+                                        <div className="col-12">
+                                            <p className="text-center fs-4 text-titlepage">ข้อมูลผู้ป่วย</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="row">
+                                    <div className="col-lg-3">
+                                        <p className="mb-0 fw-normal col-form-label">น้ำหนัก (BW) :</p>
+                                        <div className="input-group">
+                                            <input type="number" className="form-control" name="bw" step="any" min="0"
+                                            value={weight||""} 
+                                            onChange={(e) => setWeight(e.target.value)} />
+                                            <span className="input-group-text">kg</span>
+                                        </div>
+                                    </div>
+                                    <div className="col-lg-3">
+                                        <p className="mb-0 fw-normal col-form-label">ส่วนสูง (Height) :</p>
+                                        <div className="input-group">
+                                            <input type="number" className="form-control" name="height" min="0"
+                                            value={height||""} 
+                                            onChange={(e) => setHeight(e.target.value)} />
+                                            <span className="input-group-text">cm</span>
+                                        </div>
+                                    </div>
+                                    <div className="col-lg-3">
+                                        <p className="mb-0 fw-normal col-form-label ">ดัชนีมวลกาย (BMI) : </p>
+                                        <div className="input-group mb-3">
+                                            <button className="btn btn-primary" type="button" onClick={calculateBmi}>คำนวน</button>
+                                            <input type="number" className="form-control text-end" name="bmi" step="any" disabled
+                                                value={bmi||""} onChange={handleChange} />
+                                        </div>
+                                    </div>
+                                    <div className="col-lg-3">
+                                        <p className="mb-0 fw-normal col-form-label">อุณหภูมิร่างกาย (Temp) : </p>
+                                        <div className="input-group">
+                                            <input type="number" className="form-control ms-auto" name="temp" step="any" 
+                                            value={formData.temp} onChange={handleChange} />
+                                            <span className="input-group-text">°C</span>
+                                        </div>
+                                    </div>
+                                    <div className="col-lg-3">
+                                        <p className="mb-0 fw-normal col-form-label">ชีพจร (Pulse) : </p>
+                                        <div className="input-group">
+                                            <input type="number" className="form-control" name="pulse" step="any"
+                                            value={formData.pulse} onChange={handleChange} />
+                                            <span className="input-group-text">ครั้งต่อนาที</span>
+                                        </div>
+                                    </div>
+                                    <div className="col-lg-3">
+                                        <p className="mb-0 fw-normal col-form-label">การหายใจ (Respiration) : </p>
+                                        <div className="input-group">
+                                            <input type="number" className="form-control" name="respiration" step="any"
+                                            value={formData.respiration} onChange={handleChange} />
+                                            <span className="input-group-text">ครั้งต่อนาที</span>
+                                        </div>
+                                    </div>
+                                    <div className="col-lg-3">
+                                        <p className="mb-0 fw-normal col-form-label">ความดันโลหิตซิสโตลิก (BP Systolic) : </p>
+                                        <div className="input-group">
+                                            <input type="number" className="form-control" name="bpSystolic" step="any"
+                                            value={formData.bpSystolic} onChange={handleChange} />
+                                            <span className="input-group-text">มิลลิเมตรปรอท</span>
+                                        </div>
+                                    </div>
+                                    <div className="col-lg-3">
+                                        <p className="mb-0 fw-normal col-form-label">ความดันโลหิตไดแอสโตลิก (BP Diastolic) : </p>
+                                        <div className="input-group">
+                                            <input type="number" className="form-control" name="bpDiastolic" step="any"
+                                            value={formData.bpDiastolic} onChange={handleChange} />
+                                            <span className="input-group-text">มิลลิเมตรปรอท</span>
+                                        </div>
+                                    </div>
+                                    <div className="col-lg-4">
+                                        <p className="mb-0 fw-normal col-form-label ">สถานะวัณโรค (TB Status) : </p>
+                                        <select
+                                        className="form-select"
+                                    
+                                        name="tbStatus"
+                                        value={formData.tbStatus}
+                                        onChange={handleChange}
+                                        >
+                                            <option  value="" disabled>
+                                                เลือก
+                                            </option>
+                                            <option value="ไม่เป็นวัณโรค">ไม่เป็นวัณโรค</option>
+                                            <option value="เป็นวัณโรค">เป็นวัณโรค</option>
+                                        </select>
+                                    </div>
+                                    <div className="col-lg-4">
+                                        <p className="mb-0 fw-normal col-form-label ">การตรวจตา (Eye Exam) : </p>
+                                        <input type="text" className="form-control" name="eyeExam"
+                                        value={formData.eyeExam} onChange={handleChange} />
+                                    </div>
+                                    <div className="col-lg-4">
+                                        <p className="mb-0 fw-normal col-form-label ">การคัดกรอง (Screening) : </p>
+                                        {/* <input type="text" className="form-control" name="screening"
+                                        value={formData.screening||""} onChange={handleChange} /> */}
+                                        <select
+                                        className="form-select"
+                                    
+                                        name="screening"
+                                        value={formData.screening}
+                                        onChange={handleChange}
+                                        >
+                                            <option  value="" disabled>
+                                                เลือก
+                                            </option>
+                                            <option value="ไม่ผ่าน">ไม่ผ่าน</option>
+                                            <option value="ผ่าน">ผ่าน</option>
+                                        </select>
+                                    </div>
+                                    <div className="col-lg-4">
+                                        <p className="mb-0 fw-normal col-form-label ">สถานะการดื่มแอลกอฮอล์ (Alcohol Status) : </p>
+                                        <select
+                                        className="form-select"
+                                    
+                                        name="alcoholStatus"
+                                        value={formData.alcoholStatus}
+                                        onChange={handleChange}
+                                        >
+                                            <option  value="" disabled>
+                                                เลือก
+                                            </option>
+                                            <option value="ไม่ดื่ม">ไม่ดื่ม</option>
+                                            <option value="ดื่ม">ดื่ม</option>
+                                        </select>
+                                    </div>
+                                    <div className="col-lg-4">
+                                        <p className="mb-0 fw-normal col-form-label ">สถานะการสูบบุหรี่ (Smoking Status) : </p>
+                                        <select
+                                        className="form-select"
+                                    
+                                        name="smokingStatus"
+                                        value={formData.smokingStatus}
+                                        onChange={handleChange}
+                                        >
+                                            <option  value="" disabled>
+                                                เลือก
+                                            </option>
+                                            <option value="ไม่สูบบุหรี่">ไม่สูบบุหรี่</option>
+                                            <option value="สูบบุหรี่">สูบบุหรี่</option>
+                                        </select>
+                                    </div>
+                                    <div className="col-lg-4">
+                                        <p className="mb-0 fw-normal col-form-label ">สถานะการตั้งครรภ์ (Pregnancy Status) : </p>
+                                        <select
+                                        className="form-select"
+                                    
+                                        name="pregnancyStatus"
+                                        value={formData.pregnancyStatus}
+                                        onChange={handleChange}
+                                        >
+                                            <option  value="" disabled>
+                                                เลือก
+                                            </option>
+                                            <option value="ไม่ตั้งครรภ์">ไม่ตั้งครรภ์</option>
+                                            <option value="ตั้งครรภ์">ตั้งครรภ์</option>
+                                        </select>
+                                    </div>
+                                    <div className="col-lg-4">
+                                        <p className="mb-0 fw-normal col-form-label ">สถานะการกรองของไต (GFR Status) : </p>
+                                        <input type="text" className="form-control" name="gfrStatus"
+                                        value={formData.gfrStatus} onChange={handleChange} />
+                                    </div>
+                                    <div className="col-lg-8">
+                                        <p className="mb-0 fw-normal col-form-label ">สาเหตุที่ผู้ป่วยมาใช้บริการ (Visit Reason) : </p>
+                                        <input type="text" className="form-control" name="visitReason"
+                                        value={formData.visitReason} onChange={handleChange} />
+                                    </div>
+                                    <div className="col-lg-8">
+                                        <p className="mb-0 fw-normal col-form-label ">การแพ้ยา (Drug Allergy) : </p>
+                                        {selectedOption === 'ไม่แพ้ยา' && (
+                                        <div className="btn-group mt-3">
+                                            <label className="btn btn-primary px-5" >
+                                                <input className="btn-check active"  type="radio" 
+                                                value="ไม่แพ้ยา"
+                                                checked={selectedOption === 'ไม่แพ้ยา'}
+                                                onChange={handleOptionChange} /> 
+                                                ไม่แพ้ยา
+                                            </label>
+                                            <label className="btn btn-outline-primary px-5" >
+                                                <input className="btn-check" type="radio" 
+                                                value="แพ้ยา"
+                                                checked={selectedOption === 'แพ้ยา'}
+                                                onChange={handleOptionChange}  />
+                                                แพ้ยา
+                                            </label>
+                                        </div>
+                                        )}
+
+                                        {selectedOption === 'แพ้ยา' && (
+                                        <div className="btn-group mt-3">
+                                            <label className="btn btn-outline-primary px-5" >
+                                                <input className="btn-check active"  type="radio" 
+                                                value="ไม่แพ้ยา"
+                                                checked={selectedOption === 'ไม่แพ้ยา'}
+                                                onChange={handleOptionChange} /> 
+                                                ไม่แพ้ยา
+                                            </label>
+                                            <label className="btn btn-primary px-5" >
+                                                <input className="btn-check" type="radio" 
+                                                value="แพ้ยา"
+                                                checked={selectedOption === 'แพ้ยา'}
+                                                onChange={handleOptionChange}  />
+                                                แพ้ยา
+                                            </label>
+                                        </div>
+                                        )}
+                                    </div>
+                                </div>
+                            <br />
+                            <div className="d-grid gap-2 d-md-flex justify-content-md-end">
+                                <button type="submit" className="btn btn-nav px-5">Next</button>
+                            </div>
+                        </form>
+                        )}
+
+                        {activeStep === 1 && (
+                            <div className="mb-3 text-center">
+                                <p className="text-start fs-5 ">รายการแพ้ยา</p>
+                                <table className="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">รหัสยา</th>
+                                            <th scope="col">ชื่อยา</th>
+                                            <th scope="col">อธิบายระดับการแพ้</th>
+                                            <th scope="col">ชนิดการแพ้</th>
+                                            <th scope="col">ข้อมูลโดย</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {drug_allergieslist.map((item,index) => (
+                                        <tr key={index}>
+                                            <td scope="col">{item.drug_code}</td>
+                                            <td scope="col">{item.med_name}</td>
+                                            <td scope="col">{item.severity_description}</td>
+                                            <td scope="col">{item.allergy_name}</td>
+                                            <td scope="col">{item.history_source_name}</td>
+                                        </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                                <p className="text-center fs-5 mt-5">ผู้ป่วยมีอาการแพ้ยาเพิ่มเติมหรือไม่</p>
+                                <div className="d-flex justify-content-center mb-5">
+                                    <div className="">
+                                        {selectedOption === 'ไม่แพ้ยา' && (
+                                        <div className="btn-group">
+                                            <label className="btn btn-primary px-5" >
+                                                <input className="btn-check active"  type="radio" 
+                                                value="ไม่แพ้ยา"
+                                                checked={selectedOption === 'ไม่แพ้ยา'}
+                                                onChange={handleOptionChange} /> 
+                                                ไม่แพ้ยา
+                                            </label>
+                                            <label className="btn btn-outline-primary px-5" >
+                                                <input className="btn-check" type="radio" 
+                                                value="แพ้ยา"
+                                                checked={selectedOption === 'แพ้ยา'}
+                                                onChange={handleOptionChange}  />
+                                                แพ้ยา
+                                            </label>
+                                        </div>
+                                        )}
+                                        {selectedOption === 'แพ้ยา' && (
+                                        <div className="btn-group">
+                                            <label className="btn btn-outline-primary px-5" >
+                                                <input className="btn-check active"  type="radio" 
+                                                value="ไม่แพ้ยา"
+                                                checked={selectedOption === 'ไม่แพ้ยา'}
+                                                onChange={handleOptionChange} /> 
+                                                ไม่แพ้ยา
+                                            </label>
+                                            <label className="btn btn-primary px-5" >
+                                                <input className="btn-check" type="radio" 
+                                                value="แพ้ยา"
+                                                checked={selectedOption === 'แพ้ยา'}
+                                                onChange={handleOptionChange}  />
+                                                แพ้ยา
+                                            </label>
+                                        </div>
+                                        )}
+                                    </div>
+                                </div>
+                                {selectedOption === 'แพ้ยา' && (
+                                <div>
+                                    <form onSubmit={handleDrugSubmit}>
+                                        <div className="text-start">
+                                            <div className="row g-3">
+                                                <div className="row d-flex flex-column flex-md-row-reverse">
+                                                    <div className="col-12">
+                                                        <p className="fs-4 text-titlepage">บล็อกยา/กรณีแพ้ยา</p>
                                                     </div>
                                                 </div>
- 
-                                            ) : activeStep === 1?(
-                                                <div className="mb-3 text-center">
-                                                    <p className="text-start fs-5 ">รายการแพ้ยา</p>
-                                                    <table className="table table-bordered">
-                                                        <thead>
-                                                            <tr>
-                                                                <th scope="col">รหัสยา</th>
-                                                                <th scope="col">ชื่อยา</th>
-                                                                <th scope="col">อธิบายระดับการแพ้</th>
-                                                                <th scope="col">ชนิดการแพ้</th>
-                                                                <th scope="col">ข้อมูลโดย</th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                            {drug_allergieslist.map((item,index) => (
-                                                            <tr key={index}>
-                                                                <td scope="col">{item.drug_code}</td>
-                                                                <td scope="col">{item.med_name}</td>
-                                                                <td scope="col">{item.severity_description}</td>
-                                                                <td scope="col">{item.allergy_name}</td>
-                                                                <td scope="col">{item.history_source_name}</td>
-                                                            </tr>
-                                                            ))}
-                                                        </tbody>
-                                                    </table>
-
-                                                    <p className="text-center fs-5 mt-5">ผู้ป่วยมีอาการแพ้ยาเพิ่มเติมหรือไม่</p>
-                                                    <div className="d-flex justify-content-center mb-5">
-                                                        <div className="">
-                                                            {selectedOption === 'ไม่แพ้ยา' && (
-                                                            <div className="btn-group">
-                                                                <label className="btn btn-primary px-5" >
-                                                                    <input className="btn-check active"  type="radio" 
-                                                                    value="ไม่แพ้ยา"
-                                                                    checked={selectedOption === 'ไม่แพ้ยา'}
-                                                                    onChange={handleOptionChange} /> 
-                                                                    ไม่แพ้ยา
-                                                                </label>
-                                                                <label className="btn btn-outline-primary px-5" >
-                                                                    <input className="btn-check" type="radio" 
-                                                                    value="แพ้ยา"
-                                                                    checked={selectedOption === 'แพ้ยา'}
-                                                                    onChange={handleOptionChange}  />
-                                                                    แพ้ยา
-                                                                </label>
-                                                            </div>
-                                                            )}
-                                                            {selectedOption === 'แพ้ยา' && (
-                                                            <div className="btn-group">
-                                                                <label className="btn btn-outline-primary px-5" >
-                                                                    <input className="btn-check active"  type="radio" 
-                                                                    value="ไม่แพ้ยา"
-                                                                    checked={selectedOption === 'ไม่แพ้ยา'}
-                                                                    onChange={handleOptionChange} /> 
-                                                                    ไม่แพ้ยา
-                                                                </label>
-                                                                <label className="btn btn-primary px-5" >
-                                                                    <input className="btn-check" type="radio" 
-                                                                    value="แพ้ยา"
-                                                                    checked={selectedOption === 'แพ้ยา'}
-                                                                    onChange={handleOptionChange}  />
-                                                                    แพ้ยา
-                                                                </label>
-                                                            </div>
-                                                            )}
-                                                        </div>
-                                                    </div>
-                                                    {/*  */}
-                                                    {selectedOption === 'แพ้ยา' && (
-                                                    <div>
-                                                        <form onSubmit={handleDrugSubmit}>
-                                                            <div className="text-start">
-                                                                <div className="row g-3">
-                                                                    <div className="row d-flex flex-column flex-md-row-reverse">
-                                                                        <div className="col-12">
-                                                                            <p className="fs-4 text-titlepage">บล็อกยา/กรณีแพ้ยา</p>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                                <div className="row">
-                                                                    <div className="col-lg-4">
-                                                                        <p className="mb-0 fw-normal col-form-label ">รหัสยา : </p>
-                                                                        <input type="text" className="form-control" name="drug_code"
-                                                                            value={formDrugData.drug_code} onChange={handleDrugChange} required />
-                                                                    </div>
-                                                                    <div className="col-lg-8">
-                                                                        <p className="mb-0 fw-normal col-form-label ">ชื่อยา :</p>
-                                                                        <input type="text" className="form-control" name="med_name"
-                                                                        value={formDrugData.med_name} onChange={handleDrugChange} required />
-                                                                    </div>
-                                                                    <div className="col-lg-4">
-                                                                        <p className="mb-0 fw-normal col-form-label ">การแพ้ยา : </p>
-                                                                        <select
-                                                                        className="form-select"
-                                                                        required
-                                                                        name="allergy_types"
-                                                                        value={formDrugData.allergy_types}
-                                                                        onChange={handleDrugChange}
-                                                                        >
-                                                                            <option  value="" selected disabled>
-                                                                                เลือก
-                                                                            </option>
-                                                                            {drug_allergies.allergy_types.map((item) => (
-                                                                                <option key={item.id} value={item.id}>
-                                                                                ({item.id}) {item.allergy_name}
-                                                                                </option>
-                                                                            ))}
-                                                                        </select>
-                                                                    </div>
-                                                                    <div className="col-lg-4">
-                                                                        <p className="mb-0 fw-normal col-form-label ">ระดับการแพ้ยา : </p>
-                                                                        <select
-                                                                        className="form-select"
-                                                                        required
-                                                                        name="severity_levels"
-                                                                        value={formDrugData.severity_levels}
-                                                                        onChange={handleDrugChange}
-                                                                        >
-                                                                            <option  value="" selected disabled>
-                                                                                เลือก
-                                                                            </option>
-                                                                            {drug_allergies.severity_levels.map((item) => (
-                                                                                <option key={item.severity_level} value={item.severity_level}>
-                                                                                ({item.severity_level}) {item.severity_description}
-                                                                                </option>
-                                                                            ))}
-                                                                        </select>
-                                                                    </div>
-                                                                    <div className="col-lg-4">
-                                                                        <p className="mb-0 fw-normal col-form-label ">ที่มาของข้อมูล : </p>
-                                                                        <select
-                                                                        className="form-select"
-                                                                        required
-                                                                        name="history_sources"
-                                                                        value={formDrugData.history_sources}
-                                                                        onChange={handleDrugChange}
-                                                                        >
-                                                                            <option  value="" selected disabled>
-                                                                                เลือก
-                                                                            </option>
-                                                                            {drug_allergies.history_sources.map((item) => (
-                                                                                <option key={item.history_source_id} value={item.history_source_id}>
-                                                                                ({item.history_source_id}) {item.history_source_name}
-                                                                                </option>
-                                                                            ))}
-                                                                        </select>
-                                                                    </div>
-                                                                    <div className="col-lg-12">
-                                                                        <p className="mb-0 fw-normal col-form-label ">รายละเอียดเพิ่มเติม : </p>
-                                                                        <input type="text" className="form-control" name="detail"
-                                                                            value={formDrugData.detail} onChange={handleDrugChange} required />
-                                                                    </div>
-                                                                </div>
-                                                                <div className="mb-3">
-                                                                    <div className="col-12 text-center mt-4">
-                                                                        <div className="d-grid gap-2 col-6 mx-auto">
-                                                                            <button type="submit" className="btn btn-outline-danger py-2"><FontAwesomeIcon icon={faPills} className="me-2" />บล็อกยา</button>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </form>
-                                                    </div>
-                                                    
-                                                    )}
-
-                                                    {selectedOption === 'ไม่แพ้ยา' && (
-                                                        <div>
-                                                            <p className="text-center fs-5">ผู้ป่วย -ไม่แพ้ยา- <span className="text-titlepage">กรุณาคลิกที่ปุ่ม "NEXT"</span></p>
-                                                        </div>
-                                                    )}
+                                            </div>
+                                            <div className="row">
+                                                <div className="col-lg-4">
+                                                    <p className="mb-0 fw-normal col-form-label ">รหัสยา : </p>
+                                                    <input type="text" className="form-control" name="drug_code"
+                                                        value={formDrugData.drug_code} onChange={handleDrugChange} required />
                                                 </div>
-                                            ) :  activeStep === 2?(
-                                                <div className="mt-4">
-                                                    <div className="text-center">
-                                                        <p>ขึ้นทะเบียนเรียบร้อย ดำเนินการ<span className="text-primary"> พิมพ์คิวรักษา </span>ให้ผู้ป่วย</p>
-                                                    </div>
-                                                    <div className="mb-3">
-                                                        <div className="col-12 text-center mt-5">
-                                                            <div className="d-grid gap-2 col-6 mx-auto">
-                                                                <button type="button" onClick={()=>handleQReport()} className="btn btn-primary py-2"><FontAwesomeIcon icon={faPrint} className="me-2" />พิมพ์คิวรักษา</button>
-                                                            </div>
-                                                        </div>
+                                                <div className="col-lg-8">
+                                                    <p className="mb-0 fw-normal col-form-label ">ชื่อยา :</p>
+                                                    <input type="text" className="form-control" name="med_name"
+                                                    value={formDrugData.med_name} onChange={handleDrugChange} required />
+                                                </div>
+                                                <div className="col-lg-4">
+                                                    <p className="mb-0 fw-normal col-form-label ">การแพ้ยา : </p>
+                                                    <select
+                                                    className="form-select"
+                                                    required
+                                                    name="allergy_types"
+                                                    value={formDrugData.allergy_types}
+                                                    onChange={handleDrugChange}
+                                                    >
+                                                        <option  value="" selected disabled>
+                                                            เลือก
+                                                        </option>
+                                                        {drug_allergies.allergy_types.map((item) => (
+                                                            <option key={item.id} value={item.id}>
+                                                            ({item.id}) {item.allergy_name}
+                                                            </option>
+                                                        ))}
+                                                    </select>
+                                                </div>
+                                                <div className="col-lg-4">
+                                                    <p className="mb-0 fw-normal col-form-label ">ระดับการแพ้ยา : </p>
+                                                    <select
+                                                    className="form-select"
+                                                    required
+                                                    name="severity_levels"
+                                                    value={formDrugData.severity_levels}
+                                                    onChange={handleDrugChange}
+                                                    >
+                                                        <option  value="" selected disabled>
+                                                            เลือก
+                                                        </option>
+                                                        {drug_allergies.severity_levels.map((item) => (
+                                                            <option key={item.severity_level} value={item.severity_level}>
+                                                            ({item.severity_level}) {item.severity_description}
+                                                            </option>
+                                                        ))}
+                                                    </select>
+                                                </div>
+                                                <div className="col-lg-4">
+                                                    <p className="mb-0 fw-normal col-form-label ">ที่มาของข้อมูล : </p>
+                                                    <select
+                                                    className="form-select"
+                                                    required
+                                                    name="history_sources"
+                                                    value={formDrugData.history_sources}
+                                                    onChange={handleDrugChange}
+                                                    >
+                                                        <option  value="" selected disabled>
+                                                            เลือก
+                                                        </option>
+                                                        {drug_allergies.history_sources.map((item) => (
+                                                            <option key={item.history_source_id} value={item.history_source_id}>
+                                                            ({item.history_source_id}) {item.history_source_name}
+                                                            </option>
+                                                        ))}
+                                                    </select>
+                                                </div>
+                                                <div className="col-lg-12">
+                                                    <p className="mb-0 fw-normal col-form-label ">รายละเอียดเพิ่มเติม : </p>
+                                                    <input type="text" className="form-control" name="detail"
+                                                        value={formDrugData.detail} onChange={handleDrugChange} required />
+                                                </div>
+                                            </div>
+                                            <div className="mb-3">
+                                                <div className="col-12 text-center mt-4">
+                                                    <div className="d-grid gap-2 col-6 mx-auto">
+                                                        <button type="submit" className="btn btn-outline-danger py-2"><FontAwesomeIcon icon={faPills} className="me-2" />บล็อกยา</button>
                                                     </div>
                                                 </div>
-                                            ) : ""}
-                                        </Box>
-                                    </React.Fragment>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
                                 )}
-                            </Box>
-                            
+                                {selectedOption === 'ไม่แพ้ยา' && (
+                                    <div>
+                                        <p className="text-center fs-6">หากผู้ป่วย -ไม่แพ้ยา- <span className="text-titlepage">กรุณาคลิกที่ปุ่ม "NEXT"</span></p>
+                                    </div>
+                                )}
+                                <div className="d-grid gap-2 d-md-flex justify-content-md-between">
+                                    <button type="button" onClick={prevStep} className="btn btn-nav px-5">Back</button>
+                                    <button type="submit" onClick={nextSteptosub} className="btn btn-nav px-5">Next </button>
+                                </div>
+                                
+                            </div>
+                        )}
+
+                        {activeStep === 2 && (
+                            <form onSubmit={handleMainSubmit}>
+                                <h4>ตรวจสอบข้อมูล:</h4>
+                                {(weight&&height&&bmi)||isFormFilled ? (
+                                    <>
+                                    <div className="card border-0 shadow-sm p-3">
+                                        <p className="mb-0">สาเหตุที่ผู้ป่วยมาใช้บริการ (Visit Reason) :<span className="fw-light text-primary"> {formData.visitReason}</span></p>
+                                        <p className="mb-0">การแพ้ยา (Drug Allergy) :<span className="fw-light text-primary"> {selectedOption}</span></p>
+                                    </div>
+                                    <div className="mb-4 d-flex flex-column flex-lg-row justify-content-between">
+                                        <div className="card border-0 shadow-sm p-3 mt-2">
+                                            <p className="mb-0">น้ำหนัก (BW) :<span className="fw-light text-primary"> {weight}</span></p>
+                                            <p className="mb-0">ส่วนสูง (Height) :<span className="fw-light text-primary"> {height}</span></p>
+                                            <p className="mb-0">ดัชนีมวลกาย (BMI) :<span className="fw-light text-primary"> {bmi}</span></p>
+                                            <p className="mb-0">อุณหภูมิร่างกาย (Temp) :<span className="fw-light text-primary"> {formData.temp}</span></p>
+                                        </div>
+                                        <div className="card border-0 shadow-sm p-3 ms-0 ms-lg-3 mt-2">
+                                            <p className="mb-0">ชีพจร (Pulse) :<span className="fw-light text-primary"> {formData.pulse}</span></p>
+                                            <p className="mb-0">การหายใจ (Respiration) :<span className="fw-light text-primary"> {formData.respiration}</span></p>
+                                            <p className="mb-0">ความดันโลหิตซิสโตลิก (BP Systolic) :<span className="fw-light text-primary"> {formData.bpSystolic}</span></p>
+                                            <p className="mb-0">ความดันโลหิตไดแอสโตลิก (BP Diastolic) :<span className="fw-light text-primary"> {formData.bpDiastolic}</span></p>
+                                        </div>
+                                        <div className="card border-0 shadow-sm p-3 ms-0 ms-lg-3 mt-2">
+                                            <p className="mb-0">สถานะวัณโรค (TB Status) :<span className="fw-light text-primary"> {formData.tbStatus}</span></p>
+                                            <p className="mb-0">การตรวจตา (Eye Exam) :<span className="fw-light text-primary"> {formData.eyeExam}</span></p>
+                                            <p className="mb-0">การคัดกรอง (Screening) :<span className="fw-light text-primary"> {formData.screening}</span></p>
+                                            <p className="mb-0">สถานะการกรองของไต (GFR Status) :<span className="fw-light text-primary"> {formData.gfrStatus}</span></p>
+                                        </div>
+                                        <div className="card border-0 shadow-sm p-3 ms-0 ms-lg-3 mt-2">
+                                            <p className="mb-0">สถานะการดื่มแอลกอฮอล์ (Alcohol Status) :<span className="fw-light text-primary"> {formData.alcoholStatus}</span></p>
+                                            <p className="mb-0">สถานะการสูบบุหรี่ (Smoking Status) :<span className="fw-light text-primary"> {formData.smokingStatus}</span></p>
+                                            <p className="mb-0">สถานะการตั้งครรภ์ (Pregnancy Status) :<span className="fw-light text-primary"> {formData.pregnancyStatus}</span></p>
+                                        </div>
+                                    </div>
+                                    </>
+                                ): (
+                                    <p>----ยังไม่ได้การกรอกข้อมูล----</p>
+                                )}
+                                
+                                <div className="d-grid gap-2 d-md-flex justify-content-md-between">
+                                    <button type="button" onClick={prevStep} className="btn btn-nav px-5">Back</button>
+                                    {(weight&&height&&bmi)||isFormFilled ? (
+                                        <button type="submit" className="btn btn-nav px-5">Submit</button>
+                                    ):(
+                                        <button className="btn btn-nav px-5 disabled">Submit</button>
+                                    )}
+                                </div>
+                            </form>
+                        )}
+                         {activeStep === 3 && (
+                             <div className="mt-4">
+                                <div className="text-center">
+                                    <p>ขึ้นทะเบียนเรียบร้อย ดำเนินการ<span className="text-primary"> พิมพ์คิวรักษา </span>ให้ผู้ป่วย</p>
+                                </div>
+                                <div className="mb-3">
+                                    <div className="col-12 text-center mt-5">
+                                        <div className="d-grid gap-2 col-6 mx-auto">
+                                            <button type="button" onClick={()=>handleQReport()} className="btn btn-primary py-2"><FontAwesomeIcon icon={faPrint} className="me-2" />พิมพ์คิวรักษา</button>
+                                        </div>
+                                        <div className="d-grid gap-2 col-6 mx-auto mt-3">
+                                            <button type="button" className="btn py-2 text-decoration-underline">แก้ไขข้อมูลซักประวัติ</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                         )}
+                           
                         </div>
                     </div>
                 </div>
             </div>
+           
         </div>
-    )
+    </div>
+  )
 }
 
-export default PatienHistoryTake
+export default PatienHistoryTake;

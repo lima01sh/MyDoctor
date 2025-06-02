@@ -5,7 +5,7 @@ import "./registration.css";
 
 import { APi_URL_UAT } from "../../auth/config";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faHospitalUser,faPhone,faIdCard} from '@fortawesome/free-solid-svg-icons'
+import { faHospitalUser,faPhone,faIdCard,faAddressCard,faArrowDownShortWide} from '@fortawesome/free-solid-svg-icons'
 import profileDef from"../../img/ProfileDef.png";
 
 import { differenceInYears,differenceInMonths } from "date-fns";
@@ -182,330 +182,345 @@ const PatienForm = () => {
 
   return (
     <div>
-        <form onSubmit={handleSubmit}>
-            <div className="row g-3">
-                <div className="row d-flex flex-column flex-md-row-reverse">
-                    <div className="col-lg-6">
-                        <div className="profileDef">
-                            <img src={picture && picture} alt="profileDef" />
+        <div className="p-4 mb-5 ">
+            <h2 className="text-start display-6 fw-semibold text-titlepage"> เวชระเบียน</h2>
+            <nav aria-label="breadcrumb" className="bg-light rounded-2 px-3 p-2">
+                <ol className="breadcrumb mb-0">
+                    <li className="breadcrumb-item"><Link to="/registration" className="breadcrumb-link"><FontAwesomeIcon className="me-1" icon={faAddressCard} />เวชระเบียน</Link></li>
+                    <li className="breadcrumb-item mb-0 active" aria-current="page"><FontAwesomeIcon className="me-1" icon={faHospitalUser} />ลงทะเบียนผู้ป่วยใหม่</li>
+                </ol>
+            </nav>
+            <div className="mt-4">
+                {/* ฟอร์มลงทะเบียน */}
+                <div className="card p-4">
+                    <h2 className="text-start mb-5 text-titlepage">ลงทะเบียนผู้ป่วยใหม่</h2>
+                    <form onSubmit={handleSubmit}>
+                        <div className="row g-3">
+                            <div className="row d-flex flex-column flex-md-row-reverse">
+                                <div className="col-lg-6">
+                                    <div className="profileDef">
+                                        <img src={picture && picture} alt="profileDef" />
+                                    </div>
+                                </div>
+                                <div className="mb-5 col-lg-6">
+                                    <p className="mb-2 fw-bold">รูปภาพ</p>
+                                    <input type="file" className="form-control" placeholder="รูปภาพ" name="profile_image" accept="image/*" onChange={onChangePicture}/>
+                                </div>
+                            </div>
+                            <div className="row">
+                                <p className="mb-2 fw-bold">ชื่อ-สกุล (ภาษาไทย)</p>
+                                <div className="mb-2 col-lg-2">
+                                    <select
+                                    className="form-select"
+                                    required
+                                    name="thai_prefix"
+                                    value={formData.thai_prefix||""}
+                                    onChange={handleChange}
+                                    >
+                                        <option  value="" disabled>
+                                            คำนำหน้า
+                                        </option>
+                                        <option value="นาย">นาย</option>
+                                        <option value="นาง">นาง</option>
+                                        <option value="นางสาว">นางสาว</option>
+                                    </select>
+                                </div>
+                                <div className="mb-2 col-lg-4">
+                                    <input type="text" className="form-control" placeholder="ชื่อ" name="thai_firstname" 
+                                    value={formData.thai_firstname} onChange={handleChange} required />
+                                </div>
+                                <div className="mb-2 col-lg-4">
+                                    <input type="text" className="form-control" placeholder="นามสกุล" name="thai_lastname" value={formData.thai_lastname||""} onChange={handleChange} required />
+                                </div>
+                                <div className="col-lg-2">
+                                    <select
+                                    className="form-select"
+                                    required
+                                    name="gender_th"
+                                    value={formData.gender_th ||""}
+                                    onChange={handleChange}
+                                    >
+                                    <option value="" disabled>
+                                        เลือก
+                                    </option>
+                                    <option value="ชาย">ชาย</option>
+                                    <option value="หญิง">หญิง</option>
+                                    </select>
+                                </div>
+                                <p className="mb-2 fw-bold">ชื่อ-สกุล (ภาษาอังกฤษ)</p>
+                                <div className="mb-2 col-lg-2">
+                                    <select
+                                    className="form-select"
+                                    required
+                                    name="eng_prefix"
+                                    value={formData.eng_prefix||""}
+                                    onChange={handleChange}
+                                    >
+                                    <option value="" disabled>
+                                        Title
+                                    </option>
+                                    <option value="Mr.">Mr.</option>
+                                    <option value="Mrs.">Mrs.</option>
+                                    <option value="Miss">Miss</option>
+                                    </select>
+                                </div>
+                                <div className="mb-2 col-lg-4">
+                                    <input type="text" className="form-control" placeholder="ชื่อ" name="eng_firstname" value={formData.eng_firstname|| ""} onChange={handleChange} required />
+                                </div>
+                                <div className="mb-2 col-lg-4">
+                                    <input type="text" className="form-control" placeholder="นามสกุล" name="eng_lastname" value={formData.eng_lastname|| ""} onChange={handleChange} required />
+                                </div>
+                                <div className="col-lg-2">
+                                    <select
+                                    className="form-select"
+                                    required
+                                    name="gender"
+                                    value={formData.gender || ""}
+                                    onChange={handleChange}
+                                    >
+                                    <option value="" disabled>
+                                        เลือก
+                                    </option>
+                                    <option value="Male">Male</option>
+                                    <option value="Female">Female</option>
+                                    </select>
+                                </div>
+
+                                <div className="col-lg-3">
+                                    <p className="mb-0 fw-normal col-form-label">วัน/เดือน/ปี เกิด (ค.ศ.) : </p>
+                                    <input type="date" className="form-control" name="birth_date" value={birthDate || ""} onChange={handleDateChange} max={maxtoday} required />
+                                </div>
+                                <div className="col-lg-2">
+                                    <p className="mb-0 fw-normal col-form-label">อายุปัจจุบัน : </p>
+                                    <input type="text" className="form-control" placeholder="อายุ" name="age" value={age || ""} onChange={handleChange} required />
+                                </div>
+
+                                <div className="col-lg-3">
+                                    <p className="mb-0 fw-normal col-form-label">ที่มาของข้อมูล : </p>
+                                    <select
+                                    className="form-select"
+                                    required
+                                    name="data_source" 
+                                    value={formData.data_source||""} 
+                                    onChange={handleChange}
+                                    >
+                                    <option value="" disabled>
+                                        เลือก
+                                    </option>
+                                    <option value="บัตรประชาชน">บัตรประชาชน</option>
+                                    <option value="หนังสือเดินทาง(พาสปอร์ต)">หนังสือเดินทาง(พาสปอร์ต)</option>
+                                    <option value="บัตรผู้ซึ่งไม่มีสัญชาติ(ต่างด้าว)">บัตรผู้ซึ่งไม่มีสัญชาติ(ต่างด้าว)</option>
+                                    <option value="อื่นๆ">อื่นๆ</option>
+                                    </select>
+                                </div>
+                                {(() => {
+                                    switch (formData.data_source) {
+                                    case 'บัตรประชาชน':
+                                        return (
+                                        <div className="col-lg-4">
+                                            <p className="mb-0 fw-normal col-form-label">เลขบัตรประชาชน : </p>
+                                            <input type="text" className="form-control" placeholder="เลขบัตรประชาชน" name="id_card_number" plattern="[0-9]{13}" value={formData.id_card_number|| ""} onChange={handleChange} required />
+                                        </div>
+                                        );
+                                    case 'หนังสือเดินทาง(พาสปอร์ต)':
+                                        return (
+                                        <div className="col-lg-4">
+                                            <p className="mb-0 fw-normal col-form-label">เลขหนังสือเดินทาง(พาสปอร์ต) : </p>
+                                            <input type="text" className="form-control" placeholder="เลขพาสปอร์ต" name="id_card_number" value={formData.id_card_number|| ""} onChange={handleChange} required />
+                                        </div>
+                                        );
+                                    case 'บัตรผู้ซึ่งไม่มีสัญชาติ(ต่างด้าว)':
+                                        return (
+                                        <div className="col-lg-4">
+                                            <p className="mb-0 fw-normal col-form-label">บัตรผู้ซึ่งไม่มีสัญชาติ(ต่างด้าว) : </p>
+                                            <input type="text" className="form-control" placeholder="เลขทะเบียนต่างด้าว" name="id_card_number" value={formData.id_card_number|| ""} onChange={handleChange} required />
+                                        </div>
+                                        );
+                                    case 'อื่นๆ':
+                                        return (
+                                        <div className="col-lg-4">
+                                            <p className="mb-0 fw-normal col-form-label">เลขอ้างอิง : </p>
+                                            <input type="text" className="form-control" placeholder="เลขอ้างอิง" name="id_card_number" value={formData.id_card_number||""} onChange={handleChange} required />
+                                        </div>
+                                        );
+                                    default:
+                                        return (
+                                        <div className="col-lg-4">
+                                            <p className="mb-0 fw-normal col-form-label">เลขบัตรประชาชน : </p>
+                                            <input type="text" className="form-control" placeholder="เลขบัตรประชาชน" name="id_card_number" plattern="[0-9]{13}" value={formData.id_card_number||""} onChange={handleChange} required />
+                                        </div>
+                                        );
+                                    }
+                                })()}
+
+                                <div className="col-lg-4">
+                                    <p className="mb-0 fw-normal col-form-label">สัญชาติ : </p>
+                                    <input type="text" className="form-control" placeholder="สัญชาติ" name="nationality" value={formData.nationality||""} onChange={handleChange} required />
+                                </div>
+                                <div className="col-lg-4">
+                                    <p className="mb-0 fw-normal col-form-label">เชื้อชาติ : </p>
+                                    <input type="text" className="form-control" placeholder="เชื้อชาติ" name="ethnicity" value={formData.ethnicity||""} onChange={handleChange} required />
+                                </div>
+                                <div className="col-lg-4">
+                                    <p className="mb-0 fw-normal col-form-label">ศาสนา : </p>
+                                    <input type="text" className="form-control" placeholder="ศาสนา" name="religion" value={formData.religion||""} onChange={handleChange} required />
+                                </div> 
+
+                                <div className="col-lg-4">
+                                    <p className="mb-0 fw-normal col-form-label">บ้านเลขที่ ซอย/ถนน หมู่ที่ : </p>
+                                    <input type="text" className="form-control" placeholder="บ้านเลขที่ ซอย/ถนน หมู่ที่" name="address" value={formData.address||""} onChange={handleChange} required />
+                                </div>
+                                <div className="col-lg-2">
+                                    <p className="mb-0 fw-normal col-form-label">ตำบล : </p>
+                                    <input type="text" className="form-control" placeholder="ตำบล" name="sub_district" value={formData.sub_district||""} onChange={handleChange} required />
+                                </div>
+                                <div className="col-lg-2">
+                                    <p className="mb-0 fw-normal col-form-label">อำเภอ : </p>
+                                    <input type="text" className="form-control" placeholder="อำเภอ" name="district" value={formData.district|| ""} onChange={handleChange} required />
+                                </div>
+                                <div className="col-lg-2">
+                                    <p className="mb-0 fw-normal col-form-label">จังหวัด : </p>
+                                    <input type="text" className="form-control" placeholder="จังหวัด" name="province" value={formData.province|| ""} onChange={handleChange} required />
+                                </div>
+                                <div className="col-lg-2">
+                                    <p className="mb-0 fw-normal col-form-label">รหัสไปรษณีย์ : </p>
+                                    <input type="text" className="form-control" placeholder="รหัสไปรษณีย์" name="zip_code" value={formData.zip_code|| ""} onChange={handleChange} required />
+                                </div>
+                                
+                                <div className="col-lg-3">
+                                    <p className="mb-0 fw-normal col-form-label">เบอร์โทร : </p>
+                                    <div className="input-group">
+                                        <span className="input-group-text"><FontAwesomeIcon icon={faPhone} /></span>
+                                        <input type="text" className="form-control" placeholder="เบอร์โทร" name="phone_number" value={formData.phone_number|| ""} onChange={handleChange} required />
+                                    </div>
+                                </div>
+                                <div className="col-lg-3">
+                                    <p className="mb-0 fw-normal col-form-label">กรุ๊ปเลือด : </p>
+                                    <select
+                                    className="form-select"
+                                    required
+                                    name="blood_type"
+                                    value={formData.blood_type|| ""}
+                                    onChange={handleChange}
+                                    >
+                                    <option value="" disabled>
+                                        เลือก
+                                    </option>
+                                    <option value="AB">AB</option>
+                                    <option value="A">A </option>
+                                    <option value="B">B</option>
+                                    <option value="O">O</option>
+                                    </select>
+                                </div>
+                                <div className="col-lg-3">
+                                    <p className="mb-0 fw-normal col-form-label">อาชีพ : </p>
+                                    <input type="text" className="form-control" placeholder="อาชีพ" name="occupation" value={formData.occupation|| ""} onChange={handleChange} required />
+                                </div>
+                                <div className="col-lg-3">
+                                    <p className="mb-0 fw-normal col-form-label">สถานะสมรถ : </p>
+                                    <select
+                                    className="form-select"
+                                    required
+                                    name="marital_status"
+                                    value={formData.marital_status||""}
+                                    onChange={handleChange}
+                                    >
+                                    <option value="" disabled>
+                                        เลือก
+                                    </option>
+                                    <option value="โสด/single">โสด/single</option>
+                                    <option value="สมรส/married">สมรส/married</option>
+                                    <option value="หม้าย/widowed">หม้าย/widowed</option>
+                                    <option value="หย่า/divorced">หย่า/divorced</option>
+                                    <option value="แยกกันอยู่/separated">แยกกันอยู่/separated</option>
+                                    </select>
+                                </div>
+                                
+                                <div className="col-lg-6">
+                                    <p className="mb-0 fw-normal col-form-label">ชื่อ-สกุล (บิดา) : </p>
+                                    <input type="text" className="form-control" placeholder="ชื่อ-สกุล (บิดา)" name="father_name" value={formData.father_name||  ""} onChange={handleChange} required />
+                                </div>
+                                <div className="col-lg-6">
+                                    <p className="mb-0 fw-normal col-form-label">ชื่อ-สกุล (มารดา) : </p>
+                                    <input type="text" className="form-control" placeholder="ชื่อ-สกุล (มารดา)" name="mother_name" value={formData.mother_name|| ""} onChange={handleChange} required />
+                                </div>
+                                <div className="col-lg-4">
+                                    <p className="mb-0 fw-normal col-form-label">ชื่อ-สกุล (ผู้ติดต่อได้) : </p>
+                                    <input type="text" className="form-control" placeholder="ชื่อ-สกุล (ผู้ติดต่อได้)" name="emergency_contact_name" value={formData.emergency_contact_name||""} onChange={handleChange} required />
+                                </div>
+                                <div className="col-lg-4">
+                                    <p className="mb-0 fw-normal col-form-label">เกี่ยวข้องเป็น : </p>
+                                    <input type="text" className="form-control" placeholder="เกี่ยวข้องเป็น" name="related_to" value={formData.related_to||""} onChange={handleChange} required />
+                                </div>
+                                <div className="col-lg-4">
+                                    <p className="mb-0 fw-normal col-form-label">รหัสบ้านตามกรมปกครอง : </p>
+                                    <input type="text" className="form-control" placeholder="รหัสบ้านตามกรมปกครอง" name="house_code" value={formData.house_code||""} onChange={handleChange} required />
+                                </div>
+                                <div className="col-lg-3">
+                                    <p className="mb-0 fw-normal col-form-label">ลักษณะที่อยู่อาศัย : </p>
+                                    <input type="text" className="form-control" placeholder="ลักษณะที่อยู่อาศัย" name="residence_type" value={formData.residence_type|| ""} onChange={handleChange} required />
+                                </div>
+                                <div className="col-lg-6">
+                                    <p className="mb-0 fw-normal col-form-label">ที่อยู่ผู้ติดต่อได้ : </p>
+                                    <div className="row d-flex">
+                                        <div className="col-12 col-md-3 mb-2 mb-md-0">
+                                        <div className="form-check">
+                                            <input className="form-check-input" type="checkbox" checked={isChecked} onChange={handleCheckboxChange}  />
+                                            <label className="form-check-label">
+                                                บดก.
+                                            </label>
+                                        </div>
+                                        </div>
+                                        <div className="col-12 col-md-9 mb-2 mb-md-0">
+                                        <input type="text" className="form-control" placeholder="ที่อยู่ผู้ติดต่อได้" name="contact_address" value={isChecked ? emgAddress:""} onChange={handleChange} required />
+                                        </div>
+                                        {/* <p>{isChecked ? 'Checkbox is checked!' : 'Checkbox is unchecked!'}</p> */}
+                                    </div>
+                                </div>
+                                <div className="col-lg-3">
+                                    <p className="mb-0 fw-normal col-form-label">เบอร์โทรผู้ติดต่อได้ : </p>
+                                    <div className="input-group mb-3">
+                                        <span className="input-group-text"><FontAwesomeIcon icon={faPhone} /></span>
+                                            <input type="text" className="form-control" placeholder="เบอร์โทรผู้ติดต่อได้" name="emergency_contact_phone" value={formData.emergency_contact_phone||""} onChange={handleChange} required />
+                                    </div>
+                                </div>
+                                <div className="col-lg-6 mt-2">
+                                    <p className="mb-0 fw-normal col-form-label fw-semibold">โรคประจำตัว : </p>
+                                    <input type="text" className="form-control" placeholder="โรคประจำตัว" name="congenital_disease" value={formData.congenital_disease|| ""} onChange={handleChange} required />
+                                </div>
+                                <div className="col-lg-6 mt-2">
+                                    <p className="mb-0 fw-normal col-form-label fw-semibold">ประวัติการแพ้ยา : </p>
+                                    <input type="text" className="form-control" placeholder="แพ้ยา" name="drug_allergy" value={formData.drug_allergy||""} onChange={handleChange} required />
+                                </div>
+                                <div className="col-lg-9 mt-2">
+                                    <p className="mb-0 fw-normal col-form-label fw-semibold">สิทธิการรักษา : </p>
+                                    <div className="row d-flex">
+                                        <div className="col-12 col-md-3 mb-2 mb-md-0">
+                                        <input type="text" className="form-control" placeholder="Code" name="treatment_right" value={formData.treatment_right|| ""} onChange={handleChange} required />
+                                        </div>
+                                        <div className="col-12 col-md-9 mb-2 mb-md-0">
+                                        <input type="text" className="form-control" placeholder="ชื่อสิทธิการรักษา" name="insurance" value={formData.insurance|| ""} onChange={handleChange} required />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="col-lg-3">
+                                    <p className="mb-0 fw-normal col-form-label">วัน/เดือน/ปี เสียชีวิต (ค.ศ.) : </p>
+                                    <input type="date" className="form-control" name="date_of_death" value={formData.date_of_death|| ""} onChange={handleChange} max={maxtoday}  />
+                                </div>
+
+                            </div>
+
+                            <div className="col-12 text-center mt-5">
+                                <div className="d-grid gap-2 col-6 mx-auto">
+                                    <button type="submit" className={`btn btn-primary py-2 ${isActive}`}><FontAwesomeIcon icon={faHospitalUser} className="me-2" />บันทึกข้อมูล</button>
+                                </div>
+                            </div>
+
                         </div>
-                    </div>
-                    <div className="mb-5 col-lg-6">
-                        <p className="mb-2 fw-bold">รูปภาพ</p>
-                        <input type="file" className="form-control" placeholder="รูปภาพ" name="profile_image" accept="image/*" onChange={onChangePicture}/>
-                    </div>
+                    </form>
                 </div>
-                <div className="row">
-                    <p className="mb-2 fw-bold">ชื่อ-สกุล (ภาษาไทย)</p>
-                    <div className="mb-2 col-lg-2">
-                        <select
-                        className="form-select"
-                        required
-                        name="thai_prefix"
-                        value={formData.thai_prefix||""}
-                        onChange={handleChange}
-                        >
-                            <option  value="" disabled>
-                                คำนำหน้า
-                            </option>
-                            <option value="นาย">นาย</option>
-                            <option value="นาง">นาง</option>
-                            <option value="นางสาว">นางสาว</option>
-                        </select>
-                    </div>
-                    <div className="mb-2 col-lg-4">
-                        <input type="text" className="form-control" placeholder="ชื่อ" name="thai_firstname" 
-                        value={formData.thai_firstname} onChange={handleChange} required />
-                    </div>
-                    <div className="mb-2 col-lg-4">
-                        <input type="text" className="form-control" placeholder="นามสกุล" name="thai_lastname" value={formData.thai_lastname||""} onChange={handleChange} required />
-                    </div>
-                    <div className="col-lg-2">
-                        <select
-                        className="form-select"
-                        required
-                        name="gender_th"
-                        value={formData.gender_th ||""}
-                        onChange={handleChange}
-                        >
-                        <option value="" disabled>
-                            เลือก
-                        </option>
-                        <option value="ชาย">ชาย</option>
-                        <option value="หญิง">หญิง</option>
-                        </select>
-                    </div>
-                    <p className="mb-2 fw-bold">ชื่อ-สกุล (ภาษาอังกฤษ)</p>
-                    <div className="mb-2 col-lg-2">
-                        <select
-                        className="form-select"
-                        required
-                        name="eng_prefix"
-                        value={formData.eng_prefix||""}
-                        onChange={handleChange}
-                        >
-                        <option value="" disabled>
-                            Title
-                        </option>
-                        <option value="Mr.">Mr.</option>
-                        <option value="Mrs.">Mrs.</option>
-                        <option value="Miss">Miss</option>
-                        </select>
-                    </div>
-                    <div className="mb-2 col-lg-4">
-                        <input type="text" className="form-control" placeholder="ชื่อ" name="eng_firstname" value={formData.eng_firstname|| ""} onChange={handleChange} required />
-                    </div>
-                    <div className="mb-2 col-lg-4">
-                        <input type="text" className="form-control" placeholder="นามสกุล" name="eng_lastname" value={formData.eng_lastname|| ""} onChange={handleChange} required />
-                    </div>
-                    <div className="col-lg-2">
-                        <select
-                        className="form-select"
-                        required
-                        name="gender"
-                        value={formData.gender || ""}
-                        onChange={handleChange}
-                        >
-                        <option value="" disabled>
-                            เลือก
-                        </option>
-                        <option value="Male">Male</option>
-                        <option value="Female">Female</option>
-                        </select>
-                    </div>
-
-                    <div className="col-lg-3">
-                        <p className="mb-0 fw-normal col-form-label">วัน/เดือน/ปี เกิด (ค.ศ.) : </p>
-                        <input type="date" className="form-control" name="birth_date" value={birthDate || ""} onChange={handleDateChange} max={maxtoday} required />
-                    </div>
-                    <div className="col-lg-2">
-                        <p className="mb-0 fw-normal col-form-label">อายุปัจจุบัน : </p>
-                        <input type="text" className="form-control" placeholder="อายุ" name="age" value={age || ""} onChange={handleChange} required />
-                    </div>
-
-                    <div className="col-lg-3">
-                        <p className="mb-0 fw-normal col-form-label">ที่มาของข้อมูล : </p>
-                        <select
-                        className="form-select"
-                        required
-                        name="data_source" 
-                        value={formData.data_source||""} 
-                        onChange={handleChange}
-                        >
-                        <option value="" disabled>
-                            เลือก
-                        </option>
-                        <option value="บัตรประชาชน">บัตรประชาชน</option>
-                        <option value="หนังสือเดินทาง(พาสปอร์ต)">หนังสือเดินทาง(พาสปอร์ต)</option>
-                        <option value="บัตรผู้ซึ่งไม่มีสัญชาติ(ต่างด้าว)">บัตรผู้ซึ่งไม่มีสัญชาติ(ต่างด้าว)</option>
-                        <option value="อื่นๆ">อื่นๆ</option>
-                        </select>
-                    </div>
-                    {(() => {
-                        switch (formData.data_source) {
-                        case 'บัตรประชาชน':
-                            return (
-                            <div className="col-lg-4">
-                                <p className="mb-0 fw-normal col-form-label">เลขบัตรประชาชน : </p>
-                                <input type="text" className="form-control" placeholder="เลขบัตรประชาชน" name="id_card_number" plattern="[0-9]{13}" value={formData.id_card_number|| ""} onChange={handleChange} required />
-                            </div>
-                            );
-                        case 'หนังสือเดินทาง(พาสปอร์ต)':
-                            return (
-                            <div className="col-lg-4">
-                                <p className="mb-0 fw-normal col-form-label">เลขหนังสือเดินทาง(พาสปอร์ต) : </p>
-                                <input type="text" className="form-control" placeholder="เลขพาสปอร์ต" name="id_card_number" value={formData.id_card_number|| ""} onChange={handleChange} required />
-                            </div>
-                            );
-                        case 'บัตรผู้ซึ่งไม่มีสัญชาติ(ต่างด้าว)':
-                            return (
-                            <div className="col-lg-4">
-                                <p className="mb-0 fw-normal col-form-label">บัตรผู้ซึ่งไม่มีสัญชาติ(ต่างด้าว) : </p>
-                                <input type="text" className="form-control" placeholder="เลขทะเบียนต่างด้าว" name="id_card_number" value={formData.id_card_number|| ""} onChange={handleChange} required />
-                            </div>
-                            );
-                        case 'อื่นๆ':
-                            return (
-                            <div className="col-lg-4">
-                                <p className="mb-0 fw-normal col-form-label">เลขอ้างอิง : </p>
-                                <input type="text" className="form-control" placeholder="เลขอ้างอิง" name="id_card_number" value={formData.id_card_number||""} onChange={handleChange} required />
-                            </div>
-                            );
-                        default:
-                            return (
-                            <div className="col-lg-4">
-                                <p className="mb-0 fw-normal col-form-label">เลขบัตรประชาชน : </p>
-                                <input type="text" className="form-control" placeholder="เลขบัตรประชาชน" name="id_card_number" plattern="[0-9]{13}" value={formData.id_card_number||""} onChange={handleChange} required />
-                            </div>
-                            );
-                        }
-                    })()}
-
-                    <div className="col-lg-4">
-                        <p className="mb-0 fw-normal col-form-label">สัญชาติ : </p>
-                        <input type="text" className="form-control" placeholder="สัญชาติ" name="nationality" value={formData.nationality||""} onChange={handleChange} required />
-                    </div>
-                    <div className="col-lg-4">
-                        <p className="mb-0 fw-normal col-form-label">เชื้อชาติ : </p>
-                        <input type="text" className="form-control" placeholder="เชื้อชาติ" name="ethnicity" value={formData.ethnicity||""} onChange={handleChange} required />
-                    </div>
-                    <div className="col-lg-4">
-                        <p className="mb-0 fw-normal col-form-label">ศาสนา : </p>
-                        <input type="text" className="form-control" placeholder="ศาสนา" name="religion" value={formData.religion||""} onChange={handleChange} required />
-                    </div> 
-
-                    <div className="col-lg-4">
-                        <p className="mb-0 fw-normal col-form-label">บ้านเลขที่ ซอย/ถนน หมู่ที่ : </p>
-                        <input type="text" className="form-control" placeholder="บ้านเลขที่ ซอย/ถนน หมู่ที่" name="address" value={formData.address||""} onChange={handleChange} required />
-                    </div>
-                    <div className="col-lg-2">
-                        <p className="mb-0 fw-normal col-form-label">ตำบล : </p>
-                        <input type="text" className="form-control" placeholder="ตำบล" name="sub_district" value={formData.sub_district||""} onChange={handleChange} required />
-                    </div>
-                    <div className="col-lg-2">
-                        <p className="mb-0 fw-normal col-form-label">อำเภอ : </p>
-                        <input type="text" className="form-control" placeholder="อำเภอ" name="district" value={formData.district|| ""} onChange={handleChange} required />
-                    </div>
-                    <div className="col-lg-2">
-                        <p className="mb-0 fw-normal col-form-label">จังหวัด : </p>
-                        <input type="text" className="form-control" placeholder="จังหวัด" name="province" value={formData.province|| ""} onChange={handleChange} required />
-                    </div>
-                    <div className="col-lg-2">
-                        <p className="mb-0 fw-normal col-form-label">รหัสไปรษณีย์ : </p>
-                        <input type="text" className="form-control" placeholder="รหัสไปรษณีย์" name="zip_code" value={formData.zip_code|| ""} onChange={handleChange} required />
-                    </div>
-                    
-                    <div className="col-lg-3">
-                        <p className="mb-0 fw-normal col-form-label">เบอร์โทร : </p>
-                        <div className="input-group">
-                            <span className="input-group-text"><FontAwesomeIcon icon={faPhone} /></span>
-                            <input type="text" className="form-control" placeholder="เบอร์โทร" name="phone_number" value={formData.phone_number|| ""} onChange={handleChange} required />
-                        </div>
-                    </div>
-                    <div className="col-lg-3">
-                        <p className="mb-0 fw-normal col-form-label">กรุ๊ปเลือด : </p>
-                        <select
-                        className="form-select"
-                        required
-                        name="blood_type"
-                        value={formData.blood_type|| ""}
-                        onChange={handleChange}
-                        >
-                        <option value="" disabled>
-                            เลือก
-                        </option>
-                        <option value="AB">AB</option>
-                        <option value="A">A </option>
-                        <option value="B">B</option>
-                        <option value="O">O</option>
-                        </select>
-                    </div>
-                    <div className="col-lg-3">
-                        <p className="mb-0 fw-normal col-form-label">อาชีพ : </p>
-                        <input type="text" className="form-control" placeholder="อาชีพ" name="occupation" value={formData.occupation|| ""} onChange={handleChange} required />
-                    </div>
-                    <div className="col-lg-3">
-                        <p className="mb-0 fw-normal col-form-label">สถานะสมรถ : </p>
-                        <select
-                        className="form-select"
-                        required
-                        name="marital_status"
-                        value={formData.marital_status||""}
-                        onChange={handleChange}
-                        >
-                        <option value="" disabled>
-                            เลือก
-                        </option>
-                        <option value="โสด/single">โสด/single</option>
-                        <option value="สมรส/married">สมรส/married</option>
-                        <option value="หม้าย/widowed">หม้าย/widowed</option>
-                        <option value="หย่า/divorced">หย่า/divorced</option>
-                        <option value="แยกกันอยู่/separated">แยกกันอยู่/separated</option>
-                        </select>
-                    </div>
-                    
-                    <div className="col-lg-6">
-                        <p className="mb-0 fw-normal col-form-label">ชื่อ-สกุล (บิดา) : </p>
-                        <input type="text" className="form-control" placeholder="ชื่อ-สกุล (บิดา)" name="father_name" value={formData.father_name||  ""} onChange={handleChange} required />
-                    </div>
-                    <div className="col-lg-6">
-                        <p className="mb-0 fw-normal col-form-label">ชื่อ-สกุล (มารดา) : </p>
-                        <input type="text" className="form-control" placeholder="ชื่อ-สกุล (มารดา)" name="mother_name" value={formData.mother_name|| ""} onChange={handleChange} required />
-                    </div>
-                    <div className="col-lg-4">
-                        <p className="mb-0 fw-normal col-form-label">ชื่อ-สกุล (ผู้ติดต่อได้) : </p>
-                        <input type="text" className="form-control" placeholder="ชื่อ-สกุล (ผู้ติดต่อได้)" name="emergency_contact_name" value={formData.emergency_contact_name||""} onChange={handleChange} required />
-                    </div>
-                    <div className="col-lg-4">
-                        <p className="mb-0 fw-normal col-form-label">เกี่ยวข้องเป็น : </p>
-                        <input type="text" className="form-control" placeholder="เกี่ยวข้องเป็น" name="related_to" value={formData.related_to||""} onChange={handleChange} required />
-                    </div>
-                    <div className="col-lg-4">
-                        <p className="mb-0 fw-normal col-form-label">รหัสบ้านตามกรมปกครอง : </p>
-                        <input type="text" className="form-control" placeholder="รหัสบ้านตามกรมปกครอง" name="house_code" value={formData.house_code||""} onChange={handleChange} required />
-                    </div>
-                    <div className="col-lg-3">
-                        <p className="mb-0 fw-normal col-form-label">ลักษณะที่อยู่อาศัย : </p>
-                        <input type="text" className="form-control" placeholder="ลักษณะที่อยู่อาศัย" name="residence_type" value={formData.residence_type|| ""} onChange={handleChange} required />
-                    </div>
-                    <div className="col-lg-6">
-                        <p className="mb-0 fw-normal col-form-label">ที่อยู่ผู้ติดต่อได้ : </p>
-                        <div className="row d-flex">
-                            <div className="col-12 col-md-3 mb-2 mb-md-0">
-                            <div className="form-check">
-                                <input className="form-check-input" type="checkbox" checked={isChecked} onChange={handleCheckboxChange}  />
-                                <label className="form-check-label">
-                                    บดก.
-                                </label>
-                            </div>
-                            </div>
-                            <div className="col-12 col-md-9 mb-2 mb-md-0">
-                            <input type="text" className="form-control" placeholder="ที่อยู่ผู้ติดต่อได้" name="contact_address" value={isChecked ? emgAddress:""} onChange={handleChange} required />
-                            </div>
-                            {/* <p>{isChecked ? 'Checkbox is checked!' : 'Checkbox is unchecked!'}</p> */}
-                        </div>
-                    </div>
-                    <div className="col-lg-3">
-                        <p className="mb-0 fw-normal col-form-label">เบอร์โทรผู้ติดต่อได้ : </p>
-                        <div className="input-group mb-3">
-                            <span className="input-group-text"><FontAwesomeIcon icon={faPhone} /></span>
-                                <input type="text" className="form-control" placeholder="เบอร์โทรผู้ติดต่อได้" name="emergency_contact_phone" value={formData.emergency_contact_phone||""} onChange={handleChange} required />
-                        </div>
-                    </div>
-                    <div className="col-lg-6 mt-2">
-                        <p className="mb-0 fw-normal col-form-label fw-semibold">โรคประจำตัว : </p>
-                        <input type="text" className="form-control" placeholder="โรคประจำตัว" name="congenital_disease" value={formData.congenital_disease|| ""} onChange={handleChange} required />
-                    </div>
-                    <div className="col-lg-6 mt-2">
-                        <p className="mb-0 fw-normal col-form-label fw-semibold">ประวัติการแพ้ยา : </p>
-                        <input type="text" className="form-control" placeholder="แพ้ยา" name="drug_allergy" value={formData.drug_allergy||""} onChange={handleChange} required />
-                    </div>
-                    <div className="col-lg-9 mt-2">
-                        <p className="mb-0 fw-normal col-form-label fw-semibold">สิทธิการรักษา : </p>
-                        <div className="row d-flex">
-                            <div className="col-12 col-md-3 mb-2 mb-md-0">
-                            <input type="text" className="form-control" placeholder="Code" name="treatment_right" value={formData.treatment_right|| ""} onChange={handleChange} required />
-                            </div>
-                            <div className="col-12 col-md-9 mb-2 mb-md-0">
-                            <input type="text" className="form-control" placeholder="ชื่อสิทธิการรักษา" name="insurance" value={formData.insurance|| ""} onChange={handleChange} required />
-                            </div>
-                        </div>
-                    </div>
-                    <div className="col-lg-3">
-                        <p className="mb-0 fw-normal col-form-label">วัน/เดือน/ปี เสียชีวิต (ค.ศ.) : </p>
-                        <input type="date" className="form-control" name="date_of_death" value={formData.date_of_death|| ""} onChange={handleChange} max={maxtoday}  />
-                    </div>
-
-                </div>
-
-                <div className="col-12 text-center mt-5">
-                    <div className="d-grid gap-2 col-6 mx-auto">
-                        <button type="submit" className={`btn btn-primary py-2 ${isActive}`}><FontAwesomeIcon icon={faHospitalUser} className="me-2" />บันทึกข้อมูล</button>
-                    </div>
-                </div>
-
             </div>
-        </form>
+         </div>
     </div>
   )
 }

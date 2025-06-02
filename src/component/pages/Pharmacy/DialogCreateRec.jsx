@@ -277,7 +277,7 @@ export default function DialogCreateRec(treatmentData) {
       <div>
         <React.Fragment>
           <div className="d-grid gap-2"> 
-            <button className={`btn btn-outline-success`} onClick={handleClickOpen}>
+            <button className={`btn btn-outline-success text-start`} onClick={handleClickOpen}>
               <FontAwesomeIcon className="me-2 fa-lg fa-icon" icon={faFileInvoice} /> สร้างใบเสร็จ
             </button>
           </div>

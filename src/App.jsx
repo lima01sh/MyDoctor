@@ -8,6 +8,7 @@ import {APi_URL_UPLOAD,Location} from "./component/auth/config"
 import Registration from "./component/pages/Registration/Registration";
 import PatientInfo from "./component/pages/Registration/PatientInfo";
 import PatienHistoryTake from "./component/pages/Registration/PatienHistoryTake";
+import PatienForm from "./component/pages/Registration/PatienForm";
 
 import Setting from "./component/pages/setting/Setting";
 import PermissionInfo from "./component/pages/setting/PermissionInfo";
@@ -19,12 +20,13 @@ import MedicalTech from "./component/pages/MedecalTech/MedecalTech";
 import LabInternal from "./component/pages/MedecalTech/LabInternal";
 import LabExternal from "./component/pages/MedecalTech/LabExternal";
 import Pat_checks_fordisease from "./component/pages/Pat_checks_fordisease/Pat_checks_fordisease";
-import Pat_checks_fordisease_create from "./component/pages/Pat_checks_fordisease/Pat_checks_fordisease_create"
+import Pat_checks_fordisease_create from "./component/pages/Pat_checks_fordisease/Pat_checks_fordisease_create";
+import Pat_checks_fordisease_create_ball from "./component/pages/Pat_checks_fordisease/Pat_checks_fordisease_create_ball";
 
 import Listdrugallergies from "./component/pages/Registration/Listdrugallergies";
 import Treatmenthistory from "./component/pages/Registration/Treatmenthistory";
 import TreatmenthistoryInfo from "./component/pages/Registration/TreatmenthistoryInfo";
-import Medicalrecord from "./component/pages/Registration/Medicalrecord";
+import Medicalrecord from "./component/pages/Registration/Medicalrecord-00";
 import Pharmacy from "./component/pages/Pharmacy/Pharmacy";
 import PharmacyInfo from "./component/pages/Pharmacy/PharmacyInfo";
 
@@ -189,6 +191,14 @@ function App() {
         }
       />
       <Route
+        path="/patienform"
+        element={
+          <Layout isSidebarOpen={isSidebarOpen} toggleSidebar={toggleSidebar}>
+            <PatienForm />
+          </Layout>
+        }
+      />
+      <Route
         path="/patientinfo"
         element={
           <Layout isSidebarOpen={isSidebarOpen} toggleSidebar={toggleSidebar}>
@@ -245,10 +255,10 @@ function App() {
         }
       />
       <Route
-        path="/pat_checks_fordisease/create"
+        path="/pat_checks_fordisease/create_bal"
         element={
           <Layout isSidebarOpen={isSidebarOpen} toggleSidebar={toggleSidebar}>
-            <Pat_checks_fordisease_create handleLogout={handleLogout} />
+            <Pat_checks_fordisease_create_ball handleLogout={handleLogout} />
           </Layout>
         }
       />

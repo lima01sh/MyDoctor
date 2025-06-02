@@ -12,6 +12,7 @@ const TreatmenthistoryInfo = () => {
     const hn_patient_id = state.hn_patient_id; 
     const history_id = state.history_id; 
     const clinic_id = localStorage.getItem('clinic_id');
+    console.log(history_id);
 
     const apiKey = localStorage.getItem("token"); // ใส่ API Key ที่นี่
 
@@ -35,7 +36,7 @@ const TreatmenthistoryInfo = () => {
     const [xr_results, setXr_results] = useState([]);
     
     //  of Hooks 
-    const apiUrl = `${APi_URL_UAT}treatment_information&history_id=${history_id}`;
+    const apiUrl = `${APi_URL_UAT}treatment_information&history_id=${history_id}&clinic_id=${clinic_id}`;
 
     const listmedicalrecord = () => {
         const myHeaders = new Headers();
@@ -54,7 +55,7 @@ const TreatmenthistoryInfo = () => {
         //  .then((result) => console.log(result))
         .then((result) => {
         if (result.success===true) {
-            console.log(result.data.details)
+            console.log(result.data.details.patient_vitals)
             setData(result.data.details);
             setTreatment(result.data.treatment);
             setPatient_vitals(result.data.details.patient_vitals);
@@ -119,37 +120,159 @@ const TreatmenthistoryInfo = () => {
         setIsprx(false)
     }
 
+    const [receiptsData, setreceiptsData] = useState('');
+    const [CertData, setCertData] = useState([]);
+    const [CertforcartsData, setCertforcartsData] = useState([]);
+
+    const list_receipts = async(history_id) => {
+    const myHeaders = new Headers();
+    myHeaders.append("X-API-KEY", apiKey);
+
+    const requestOptions = {
+        method: "GET",
+        headers: myHeaders,
+        redirect: "follow"
+    };
+
+    fetch(`${APi_URL_UAT}list_receipts&clinic_id=${clinic_id}&history_id=${history_id}`, requestOptions)
+        .then((response) => response.json())
+        .then((data) => {
+        if(data["success"]===true){
+            setreceiptsData(data.data.receipt.total_price)
+        }else{
+            if(data.status === "error") {
+            Swal.fire({
+                icon: 'error',
+                title: 'Token! หมดอายุ',
+                text: 'กรุณาเข้าสู่ระบบใหม่',
+                confirmButtonText: 'ออกจากระบบ'
+            }).then(() => {
+                handleLogout()
+            });
+            console.error("Unauthorized: กรุณาตรวจสอบ API Key หรือการเข้าสู่ระบบ");
+            }else{
+            setreceiptsData('');
+            }
+            
+        }
+        })
+        .catch((error) => console.error("Error fetching data:", error));
+    };
+
+    const Cert = async(history_id) => {
+        const myHeaders = new Headers();
+        myHeaders.append("X-API-KEY", apiKey);
+
+        const requestOptions = {
+            method: "GET",
+            headers: myHeaders,
+            redirect: "follow"
+        };
+
+        fetch(`${APi_URL_UAT}get_certificate_detail&history_id=${history_id}&certificate_type=general&clinic_id=${clinic_id}`, requestOptions)
+        .then((response) => response.json())
+        .then((data) => {
+        if(data["success"]===true){
+            setCertData(data.data)
+            console.log(data.data)
+        }else{
+            if(data.status === "error") {
+            Swal.fire({
+                icon: 'error',
+                title: 'Token! หมดอายุ',
+                text: 'กรุณาเข้าสู่ระบบใหม่',
+                confirmButtonText: 'ออกจากระบบ'
+            }).then(() => {
+                handleLogout()
+            });
+            console.error("Unauthorized: กรุณาตรวจสอบ API Key หรือการเข้าสู่ระบบ");
+            }else{
+            setCertData([])
+            }
+            
+        }
+        })
+        .catch((error) => console.error("Error fetching data:", error));
+    };
+
+    const CertforCar = async(history_id) => {
+        const myHeaders = new Headers();
+        myHeaders.append("X-API-KEY", apiKey);
+
+        const requestOptions = {
+            method: "GET",
+            headers: myHeaders,
+            redirect: "follow"
+        };
+
+        fetch(`${APi_URL_UAT}get_certificate_detail&history_id=${history_id}&certificate_type=driving&clinic_id=${clinic_id}`, requestOptions)
+        .then((response) => response.json())
+        .then((data) => {
+        if(data["success"]===true){
+            setCertforcartsData(data.data)
+        }else{
+            if(data.status === "error") {
+            Swal.fire({
+                icon: 'error',
+                title: 'Token! หมดอายุ',
+                text: 'กรุณาเข้าสู่ระบบใหม่',
+                confirmButtonText: 'ออกจากระบบ'
+            }).then(() => {
+                handleLogout()
+            });
+            console.error("Unauthorized: กรุณาตรวจสอบ API Key หรือการเข้าสู่ระบบ");
+            }else{
+            setCertforcartsData([])
+            }
+            
+        }
+        })
+        .catch((error) => console.error("Error fetching data:", error));
+    };
+
+    useEffect(() => {
+        if(history_id){
+        list_receipts(history_id);
+        Cert(history_id);
+        CertforCar(history_id);
+        }
+    }, [history_id]);
+
     const handleReport = (history_id) => {
-        const printUrl = ` https://www.addpay.co.th/service-ui/service-my-clinic/service-my-monitor/AppointmentCard/?history_id=${history_id}`;
+        const printUrl = ` https://www.addpay.co.th/service-ui/service-my-clinic/service-my-monitor/AppointmentCard/?history_id=${history_id}&clinic_id=${clinic_id}`;
         const printWindow = window.open(printUrl, '_blank', 'width=600,height=400');
     };
     const handleSTReport = (history_id) => {
-        const printUrl = `https://www.addpay.co.th/service-ui/service-my-clinic/service-my-monitor/MedicineDetails/?history_id=${history_id}`;
+        const printUrl = `https://www.addpay.co.th/service-ui/service-my-clinic/service-my-monitor/MedicineDetails?history_id=${history_id}&clinic_id=${clinic_id}`;
         const printWindow = window.open(printUrl, '_blank', 'width=600,height=400');
     };
     const handleBCReport = () => {
-        const printUrl = `https://www.addpay.co.th/service-ui/service-my-clinic/service-my-monitor/BlankCard/`;
+        const printUrl = `https://www.addpay.co.th/service-ui/service-my-clinic/service-my-monitor/BlankCard?history_id=${history_id}&clinic_id=${clinic_id}`;
         const printWindow = window.open(printUrl, '_blank', 'width=600,height=400');
     };
     const handlePPReport = (history_id) => {
-        const printUrl = `https://www.addpay.co.th/service-ui/service-my-clinic/service-my-monitor/PrescriptionCard/?history_id=${history_id}`;
+        const printUrl = `https://www.addpay.co.th/service-ui/service-my-clinic/service-my-monitor/PrescriptionCard?history_id=${history_id}&clinic_id=${clinic_id}`;
         const printWindow = window.open(printUrl, '_blank', 'width=600,height=400');
     };
     const handleOPDReport = (history_id) => {
-        const printUrl = `https://www.addpay.co.th/service-ui/service-my-clinic/service-my-report/OPD_TO_PDF.php?history_id=${history_id}`;
+        const printUrl = `https://www.addpay.co.th/service-ui/service-my-clinic/service-my-report/OPD_TO_PDF.php?history_id=${history_id}&clinic_id=${clinic_id}`;
         const printWindow = window.open(printUrl, '_blank', 'width=600,height=400');
     };
-    const handleGReport = (history_id) => {
-        const printUrl = `https://www.addpay.co.th/service-ui/service-my-clinic/service-my-report/generate_pdf.php?history_id=${history_id}`;
+    const handleCert = (history_id) => {
+        const printUrl = `https://www.addpay.co.th/service-ui/service-my-clinic/service-my-report/Medical_certificatePDF.php?history_id=${history_id}&clinic_id=${clinic_id}`;
         const printWindow = window.open(printUrl, '_blank', 'width=600,height=400');
-    };
+      };
     // 
-    const handleMedicalForCar = (history_id) => {
-        const printUrl = `https://www.addpay.co.th/service-ui/service-my-clinic/service-my-report/generate_pdf.php?history_id=${history_id}`;
+    const handleRec = (history_id) => {
+        const printUrl = `https://www.addpay.co.th/service-ui/service-my-clinic/service-my-monitor/MiniReceipt?history_id=${history_id}&clinic_id=${clinic_id}`;
         const printWindow = window.open(printUrl, '_blank', 'width=600,height=400');
-    };
+      };
+    const handleCertforcar = (history_id) => {
+        const printUrl = `https://www.addpay.co.th/service-ui/service-my-clinic/service-my-report/Medical_certificate_for_carPDF.php?history_id=${history_id}&clinic_id=${clinic_id}`;
+        const printWindow = window.open(printUrl, '_blank', 'width=600,height=400');
+      };
     const handleMedical = (history_id) => {
-        const printUrl = `https://www.addpay.co.th/service-ui/service-my-clinic/service-my-report/generate_pdf.php?history_id=${history_id}`;
+        const printUrl = `https://www.addpay.co.th/service-ui/service-my-clinic/service-my-report/generate_pdf.php?history_id=${history_id}&clinic_id=${clinic_id}`;
         const printWindow = window.open(printUrl, '_blank', 'width=600,height=400');
     };
 
@@ -182,7 +305,7 @@ const TreatmenthistoryInfo = () => {
                         </div>
                         <div className="card-body">
                             <div className="">
-                                <p className="mb-0 fs-5"><span className="fw-semibold">ชื่อ-นามสกุล : </span>{state.thai_prefix} {state.thai_firstname}  {state.thai_firstname}</p>
+                                <p className="mb-0 fs-5"><span className="fw-semibold">ชื่อ-นามสกุล : </span>{state.thai_prefix} {state.thai_firstname}  {state.thai_lastname}</p>
                             </div>
                             <div className="row d-flex flex-column-reverse flex-md-row mb-4">
                                 <div className="col-xl-10 col-md-8 pt-3 mt-2 px-4 px-md-3 px-lg-4">
@@ -224,30 +347,27 @@ const TreatmenthistoryInfo = () => {
                                                 ซักประวัติ
                                             </button>
                                             {isVisible ? 
-                                            patient_vitals.map((patient_vitals) => (
-                                            <div key={patient_vitals.id} className="card-body info-card">
-                                                <p>น้ำหนัก (BW) : <span>{patient_vitals.bw||"-"} </span>kg.</p>
-                                                <p>ส่วนสูง (Height) : <span>{patient_vitals.height||"-"}</span>  cm.</p>
-                                                <p>ดัชนีมวลกาย (BMI) : <span>{patient_vitals.bmi||"-"}</span> </p>
-                                                <p>อุณหภูมิร่างกาย (Temp) : <span>{patient_vitals.temp||"-"}</span>  °C</p>
-                                                <p>ชีพจร (Pulse) : <span>{patient_vitals.pulse||"-"}</span> </p>
-                                                <p>การหายใจ (Respiration) : <span>{patient_vitals.respiration||"-"}</span> </p>
-                                                <p>ความดันโลหิตซิสโตลิก (BP Systolic) : <span>{patient_vitals.bp_systolic||"-"}</span> </p>
-                                                <p>ความดันโลหิตไดแอสโตลิก (BP Diastolic) : <span>{patient_vitals.bp_diastolic||"-"}</span> </p>
-                                                <p>สถานะวัณโรค (TB Status) : <span>{patient_vitals.tb_status||"-"}</span> </p>
-                                                <p>การตรวจตา (Eye Exam) : <span>{patient_vitals.eye_exam||"-"}</span> </p>
-                                                <p>การคัดกรอง (Screening) : <span>{patient_vitals.screening||"-"}</span> </p>
-                                                <p>สถานะการดื่มแอลกอฮอล์ (Alcohol Status) : <span>{patient_vitals.alcohol_status||"-"}</span> </p>
-                                                <p>สถานะการสูบบุหรี่ (Smoking Status) : <span>{patient_vitals.smoking_status||"-"}</span> </p>
-                                                <p>สถานะการตั้งครรภ์ (Pregnancy Status) : <span>{patient_vitals.pregnancy_status||"-"}</span> </p>
-                                                <p>สถานะการกรองของไต (GFR Status) : <span>{patient_vitals.gfr_status||"-"}</span> </p>
-                                                <p>สาเหตุที่ผู้ป่วยมาใช้บริการ (Visit Reason) : <span>{patient_vitals.visit_reason||"-"}</span> </p>
-                                                <p>การแพ้ยา (Drug Allergy) : <span>{patient_vitals.drug_allergy||"-"}</span> </p>
+                                            patient_vitals.map((patient_vital,index) => (
+                                            <div key={index} className="card-body info-card">
+                                                <p>น้ำหนัก (BW) : <span>{patient_vital.bw||"-"} </span>kg.</p>
+                                                <p>ส่วนสูง (Height) : <span>{patient_vital.height||"-"}</span>  cm.</p>
+                                                <p>ดัชนีมวลกาย (BMI) : <span>{patient_vital.bmi||"-"}</span> </p>
+                                                <p>อุณหภูมิร่างกาย (Temp) : <span>{patient_vital.temp||"-"}</span>  °C</p>
+                                                <p>ชีพจร (Pulse) : <span>{patient_vital.pulse||"-"}</span> </p>
+                                                <p>การหายใจ (Respiration) : <span>{patient_vital.respiration||"-"}</span> </p>
+                                                <p>ความดันโลหิตซิสโตลิก (BP Systolic) : <span>{patient_vital.bp_systolic||"-"}</span> </p>
+                                                <p>ความดันโลหิตไดแอสโตลิก (BP Diastolic) : <span>{patient_vital.bp_diastolic||"-"}</span> </p>
+                                                <p>สถานะวัณโรค (TB Status) : <span>{patient_vital.tb_status||"-"}</span> </p>
+                                                <p>การตรวจตา (Eye Exam) : <span>{patient_vital.eye_exam||"-"}</span> </p>
+                                                <p>การคัดกรอง (Screening) : <span>{patient_vital.screening||"-"}</span> </p>
+                                                <p>สถานะการดื่มแอลกอฮอล์ (Alcohol Status) : <span>{patient_vital.alcohol_status||"-"}</span> </p>
+                                                <p>สถานะการสูบบุหรี่ (Smoking Status) : <span>{patient_vital.smoking_status||"-"}</span> </p>
+                                                <p>สถานะการตั้งครรภ์ (Pregnancy Status) : <span>{patient_vital.pregnancy_status||"-"}</span> </p>
+                                                <p>สถานะการกรองของไต (GFR Status) : <span>{patient_vital.gfr_status||"-"}</span> </p>
+                                                <p>สาเหตุที่ผู้ป่วยมาใช้บริการ (Visit Reason) : <span>{patient_vital.visit_reason||"-"}</span> </p>
+                                                <p>การแพ้ยา (Drug Allergy) : <span>{patient_vital.drug_allergy||"-"}</span> </p>
                                             </div >
-                                            
                                             ))
-                                            
-                                            
                                             : null}
                                             
                                         </div>
@@ -257,8 +377,8 @@ const TreatmenthistoryInfo = () => {
                                                 รายการยา / คำสั่งใช้ยา/วิธีใช้ยา / จำนวน (Rx.)
                                             </button>
                                             {isrx ? 
-                                            rx.map((rx) => (
-                                            <div  key={rx.rx_id} className="px-3 py-2 info-card">
+                                            rx.map((rx,index) => (
+                                            <div  key={index} className="px-3 py-2 info-card">
                                                 <p className="mb-0">รหัสยา :<span>{rx.meditem_id}</span></p>
                                                 <p className="mb-0">ชื่อยา :<span>{rx.medicine_name}</span></p>
                                                 <p className="mb-0">dosage :<span>{rx.dosage}</span></p>
@@ -276,8 +396,8 @@ const TreatmenthistoryInfo = () => {
                                                 วัน เวลา นัดหมาย รายการนัดหมาย (FU.)
                                             </button>
                                             {isfu ? 
-                                            fu.map((fu) => (
-                                            <div  key={fu.fu_id} className="px-3 py-2 info-card">
+                                            fu.map((fu,index) => (
+                                            <div  key={index} className="px-3 py-2 info-card">
                                                 <p className="mb-0">วันนัดครั้งถัดไป :<span>{fu.date}</span></p>
                                                 <p className="mb-0">เวลา :<span>{fu.time}</span></p>
                                                 <p className="mb-0">รายละเอียด : <span>{dx.details}</span></p>
@@ -292,8 +412,8 @@ const TreatmenthistoryInfo = () => {
                                                  ผลตรวจเลือดต่างๆ(มีค่าบริการเพิ่ม) (Lab)
                                             </button>
                                             {islab_results ? 
-                                            lab_results.map((lab_results) => (
-                                            <div key={lab_results.lab_id} className="px-3 py-2 info-card">
+                                            lab_results.map((lab_results,index) => (
+                                            <div key={index} className="px-3 py-2 info-card">
                                                     <p className="mb-0">ชื่อ Lab :<span>{lab_results.test_name}</span></p>
                                                     <p className="mb-0">ส่ง Lab :<span>{lab_results.result_value}</span></p>
                                                     <p className="mb-0">unit :<span>{lab_results.unit}</span></p>
@@ -311,8 +431,8 @@ const TreatmenthistoryInfo = () => {
                                                 ผล x-ray (มีค่าบริการเพิ่ม) (XR)
                                             </button>
                                             {isxr_results ? 
-                                            xr_results.map((xr_results) => (
-                                            <div key={xr_results.xr_id} className="px-3 py-2 info-card">
+                                            xr_results.map((xr_results,index) => (
+                                            <div key={index} className="px-3 py-2 info-card">
                                                     <p className="mb-0">รายละเอียด :<span>{xr_results.description}</span></p>
                                                     <p className="mb-0">ค่าใช้จ่าย :<span>{xr_results.price}</span></p>
                                                     <hr className="mt-2"/>
@@ -329,9 +449,9 @@ const TreatmenthistoryInfo = () => {
                                                 อาการสำคัญที่มาพบแพทย์ (CC)
                                             </button>
                                             {iscc ? 
-                                            cc.map((cc) => (
-                                            <div key={cc.xr_id} className="px-3 py-2 info-card">
-                                                <p key={cc.cc_id} className="mb-0">{cc.description}</p>
+                                            cc.map((cc,index) => (
+                                            <div key={index} className="px-3 py-2 info-card">
+                                                <p className="mb-0">{cc.description}</p>
                                                 <hr className="mt-2"/>
                                             </div>
                                             ))
@@ -343,8 +463,8 @@ const TreatmenthistoryInfo = () => {
                                                 รหัสวินิจฉัยโรค (Dx.)
                                             </button>
                                             {isdx ? 
-                                            dx.map((dx) => (
-                                            <div key={dx.xr_id} className="px-3 py-2 info-card">
+                                            dx.map((dx,index) => (
+                                            <div key={index} className="px-3 py-2 info-card">
                                                 <p className="mb-0">{dx.code}</p>
                                                 <p className="mb-0">{dx.description}</p>
                                                 <p className="mb-0">รหัส ICD : <span>{dx.icd_id}</span></p>
@@ -359,8 +479,8 @@ const TreatmenthistoryInfo = () => {
                                                 การตรวจร่างกาย (PE)
                                             </button>
                                             {ispe ? 
-                                            pe.map((pe) => (
-                                            <div key={pe.pe_id} className="px-3 py-2 info-card">
+                                            pe.map((pe,index) => (
+                                            <div key={index} className="px-3 py-2 info-card">
                                                 <p className="mb-0">รายละเอียด :<span>{pe.description}</span></p>
                                                 <p className="mb-0">ค่าบริการ :<span>{pe.price}</span></p>
                                                 <hr className="mt-2"/>
@@ -374,8 +494,8 @@ const TreatmenthistoryInfo = () => {
                                                 ประวัติการรักษา โรคประจำตัว (PH)
                                             </button>
                                             {isph ? 
-                                            ph.map((ph) => (
-                                            <div key={ph.ph_id} className="px-3 py-2 info-card">
+                                            ph.map((ph,index) => (
+                                            <div key={index} className="px-3 py-2 info-card">
                                                 <p className="mb-0">รายละเอียด :<span>{ph.description}</span></p>
                                                 <hr className="mt-2"/>
                                             </div>
@@ -388,8 +508,8 @@ const TreatmenthistoryInfo = () => {
                                                 ประวัติการเจ็บป่วย (PI)
                                             </button>
                                             {ispi ? 
-                                            pi.map((pi) => (
-                                            <div key={pi.pi_id} className="px-3 py-2 info-card">
+                                            pi.map((pi,index) => (
+                                            <div key={index} className="px-3 py-2 info-card">
                                                 <p className="mb-0">รายละเอียด :<span>{pi.description}</span></p>
                                             </div>
                                             ))
@@ -401,8 +521,8 @@ const TreatmenthistoryInfo = () => {
                                                  หัตถการที่รักษา เช่น U/S ,ล้างแผล,ฉีดยา (Prx)
                                             </button>
                                             {isprx ? 
-                                            prx.map((prx) => (
-                                            <div key={prx.prx_id} className="px-3 py-2 info-card">
+                                            prx.map((prx,index) => (
+                                            <div key={index} className="px-3 py-2 info-card">
                                                 <p className="mb-0">รหัส :<span>{prx.prcd_id}</span></p>
                                                 <p className="mb-0">รายละเอียด :<span>{prx.procedure_name}</span></p>
                                                 <p className="mb-0">จำนวน :<span>{prx.quantity}</span></p>
@@ -429,27 +549,47 @@ const TreatmenthistoryInfo = () => {
                                         <button onClick={()=>handleSTReport(history_id)} className="btn btn-outline-success py-2 me-2 me-xl-0 mb-2 mb-xl-2" type="button">
                                             <FontAwesomeIcon className="me-2 fa-lg fa-icon" icon={faPrescription} /> สติ๊กเกอร์ซองยา
                                         </button>
-                                        <button onClick={()=>handleBCReport()} className="btn btn-outline-success py-2 me-2 me-xl-0 mb-2 mb-xl-2" type="button">
+                                        <button onClick={()=>handleBCReport(history_id)} className="btn btn-outline-success py-2 me-2 me-xl-0 mb-2 mb-xl-2" type="button">
                                             <FontAwesomeIcon className="me-2 fa-lg fa-icon" icon={faNoteSticky} /> สติ๊กเกอร์เปล่า
                                         </button>
                                        
                                         <p className="fw-light mt-2">เอกสารเพิ่มเติม</p>
-                                        <button onClick={()=>handleGReport(history_id)} className="btn btn-outline-secondary py-2 me-2 me-xl-0 mb-2 mb-xl-2" type="button">
-                                            <FontAwesomeIcon className="me-2 fa-lg fa-icon" icon={faFileContract} />ใบรับรองแพทย์
-                                        </button>
-                                        <button onClick={()=>handleMedicalForCar(history_id)} className="btn btn-outline-secondary py-2 me-2 me-xl-0 mb-2 mb-xl-2" type="button">
-                                            <FontAwesomeIcon className="me-2 fa-lg fa-icon" icon={faFileContract} />ใบรับรองแพทย์<br/>(สำหรับใบอนุญาตขับรถ)
-                                        </button>
+
+                                        {CertData.length !== 0 ? (
+                                            <button className={`btn btn-outline-secondary   text-start`} onClick={()=>handleCert(history_id)} >
+                                            <FontAwesomeIcon className="me-2 fa-lg fa-icon" icon={faFileInvoice} /> ใบรับรองแพทย์
+                                            </button>
+                                        ) : (
+                                           ""
+                                        )}
+
+                                        {CertforcartsData.length !== 0 ? (
+                                            <button className={`btn btn-outline-secondary text-start`} onClick={()=>handleCertforcar(history_id)} >
+                                            <FontAwesomeIcon className="me-2 fa-lg fa-icon" icon={faFileInvoice} /> ใบรับรองแพทย์<br/>(สำหรับใบอนุญาตขับรถ)
+                                            </button>
+                                        ) : (
+                                           ""
+                                        )}
+
                                         <button onClick={()=>handleMedical(history_id)} className="btn btn-outline-secondary py-2 me-2 me-xl-0 mb-2 mb-xl-2" type="button">
                                             <FontAwesomeIcon className="me-2 fa-lg fa-icon" icon={faFileContract} />ใบรับรองการเจ็บป่วย
                                         </button>
-                                        <button className="btn btn-outline-primary py-2 me-2 me-xl-0 mb-2 mb-xl-2" type="button">
-                                            <FontAwesomeIcon className="me-2 fa-lg fa-icon" icon={faFileInvoice} />ใบเสร็จรับเงิน
-                                        </button>
+
+
+                                        {receiptsData > 0 ? (
+                                            <button className={`btn btn-outline-success py-2 me-2 me-xl-0 mb-2 mb-xl-2`} onClick={()=>handleRec(history_id)} >
+                                            <FontAwesomeIcon className="me-2 fa-lg fa-icon" icon={faFileInvoice} /> ใบเสร็จ
+                                            </button>
+                                        ) : (
+                                            ""
+                                            //<DialogCreateRec treatmentData={treatmentData} />
+                                        )}
                                         <button onClick={()=>handleOPDReport(history_id)} className="btn btn-outline-primary py-2 me-2 me-xl-0 mb-2 mb-xl-2" type="button">
                                             <FontAwesomeIcon className="me-2 fa-lg fa-icon" icon={faFileCircleExclamation} />ใบ OPD Card
                                         </button>
+
                                     </div>
+                                    
                                 </div>
                             </div>
                         </div>

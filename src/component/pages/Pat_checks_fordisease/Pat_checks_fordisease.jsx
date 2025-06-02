@@ -114,8 +114,8 @@ function Pat_checks_fordisease({ handleLogout }) {
           </tr>
         </thead>
         <tbody>
-          {patients.map((patient) => (
-            <tr key={patient.id}>
+          {patients.map((patient,index) => (
+            <tr key={index}>
               <td>{patient.hn_patient_id}</td>
               <td>{patient.queue_number}</td>
               <td>
@@ -126,7 +126,7 @@ function Pat_checks_fordisease({ handleLogout }) {
               <td>
                 {patient.status === "กำลังตรวจ" ? (
                   <Link
-                    to="/pat_checks_fordisease/create"
+                    to="/pat_checks_fordisease/create_bal"
                     state={{
                       phone_number: patient.phone_number,
                       thai_firstname: patient.thai_firstname,

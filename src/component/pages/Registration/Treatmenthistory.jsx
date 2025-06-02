@@ -21,21 +21,43 @@ const Treatmenthistory = () => {
 
     // tABLE
     const customStyles = {
+        tableWrapper: {
+            style: {
+              borderRadius: '5px', // 👈 ขอบโค้ง
+              overflow: 'hidden',   // ✅ บังคับให้มุมโค้งทำงาน
+            },
+        },
+        table: {
+            style: {
+                borderRadius: '5px',
+                border: 'none',
+            },
+        },
         rows: {
             style: {
-                minHeight: '60px', // override the row height
+                marginTop:'3px',
+                marginBottom:'3px',
+                minHeight: '50px',
+                borderBottom: 'none',
+                backgroundColor: '#ffffff',
             },
         },
         headCells: {
             style: {
+                backgroundColor: '#E9F2FB',
                 fontSize: '16px',
                 fontWeight: 'bold',
-                backgroundColor: '#CCE5FF'
+                justifyContent: 'center',  // ✅ ใช้ที่นี่
+                display: 'flex',           // ✅ สำคัญเพื่อให้ flex ทำงาน
+                alignItems: 'center',      // ✅ ถ้าอยากให้อยู่กลางแนวตั้งด้วย
+                color: '#547694',
             },
         },
         cells: {
             style: {
                 fontSize: '16px',
+                border: 'none',
+                justifyContent:'center',
             },
         },
     };
@@ -159,8 +181,8 @@ const Treatmenthistory = () => {
                     <div className="card-header fs-5 fw-semibold">
                         รหัสผู้ป่วย : {hn_patient_id}
                     </div>
-                    <div className="p-3">
-                        <DataTable className="border" columns={columns} data={filteredPatients} 
+                    <div className="p-2">
+                        <DataTable columns={columns} data={filteredPatients} 
                         customStyles={customStyles}
                         pagination
                         paginationComponentOptions={paginationComponentOptions}

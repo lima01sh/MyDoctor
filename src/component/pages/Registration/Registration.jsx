@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { Link,useLocation, useNavigate } from 'react-router-dom';
 import { APi_URL_UAT } from "../../auth/config";
 import Medicalrecord from "./Medicalrecord";
-import PatienForm from "./PatienForm";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faHospitalUser,faAddressCard,faPhone,faIdCard,faArrowDownShortWide } from '@fortawesome/free-solid-svg-icons';
 import profileDef from"../../img/ProfileDef.png";
@@ -32,28 +31,23 @@ const Registration = () => {
         </nav>
         <div className="mt-3">
           <div className="">
-            <div className="row d-flex justify-content-end">
-              <div className="col-12 col-md-6 col-lg-3 text-end">
-                <Link to={URL_Q} target="_black" className="d-grid gap-2 nav-link">
-                  <div className="btn btn-outline-primary px-5 py-4">
+            <div className="d-flex flex-column flex-md-row justify-content-end">
+                <Link to={URL_Q} target="_black" className="btn btn-outline-primary px-5 py-3">
                     <FontAwesomeIcon icon={faArrowDownShortWide} className="mb-2 fa-2xl"/>
                     <br/>คิวรักษาวันนี้
-                  </div>
                 </Link>
-              </div>
             </div>
             <div className="mt-3">
               {/* ช่องค้นหา */}
               <div className="card p-4">
-                <h2 className="text-start text-titlepage">ค้นหาในเวชระเบียน</h2>
+                <div className="d-flex flex-column flex-md-row justify-content-between">
+                <h2 className="">รายชื่อในเวชระเบียน</h2>
+                <Link to={"/patienform"} target="_black" className="ms-3 btn btn-outline-success py-3">
+                    <FontAwesomeIcon icon={faHospitalUser} className="mb-2 fa-xl"/>
+                    <br/><span className="fs-6 fw-light">ลงทะเบียนผู้ป่วยใหม่</span>
+                </Link>
+                </div>
                 <Medicalrecord />
-              </div>
-            </div>
-            <div className="mt-4">
-              {/* ฟอร์มลงทะเบียน */}
-              <div className="card p-4">
-                <h2 className="text-start mb-5 text-titlepage">ลงทะเบียนผู้ป่วยใหม่</h2>
-                <PatienForm />
               </div>
             </div>
           </div>

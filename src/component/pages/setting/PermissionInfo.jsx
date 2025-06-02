@@ -227,6 +227,7 @@ const PermissionInfo = () => {
                         paginationComponentOptions={paginationComponentOptions}
                         highlightOnHover
 		                pointerOnHover
+                        keyField="id"
                         />
                 </div>
             </div>
