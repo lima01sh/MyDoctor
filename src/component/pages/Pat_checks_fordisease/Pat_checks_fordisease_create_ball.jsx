@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { Modal, Button } from 'react-bootstrap';
 import Swal from 'sweetalert2';
-import DisplayData from "./DisplayData";
+import DisplayDataxx from "./DisplayDataxx";
 import { APi_URL_UAT } from "../../auth/config";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
+import { Modal } from "react-bootstrap";
 
 const Pat_checks_fordisease_create_ball = ({ handleLogout }) => {
     const getCurrentDateAndTime = () => {
@@ -20,8 +20,8 @@ const Pat_checks_fordisease_create_ball = ({ handleLogout }) => {
     const patientData = location.state || {};
     const apiKey = localStorage.getItem("token");
     const clinic_id = localStorage.getItem("clinic_id");
-    const [showModal, setShowModal] = useState(false);
     const [activePatient, setActivePatient] = useState(null);
+
     const [Text, setText] = useState(null);
     const [patient_vitals, setPatientVitals] = useState({});
     const [savedData, setSavedData] = useState(null);
@@ -33,58 +33,15 @@ const Pat_checks_fordisease_create_ball = ({ handleLogout }) => {
         ph: { hn_patient_id: patientData.hn_patient_id, description: "", treatment_history_id: patientData.history_id, clinic_id: clinic_id },
         pe: { hn_patient_id: patientData.hn_patient_id, description: "", price: "80.00", treatment_history_id: patientData.history_id, clinic_id: clinic_id },
         prx: { hn_patient_id: patientData.hn_patient_id, procedure_name: "", quantity: "", price: "", prcd_id: "", treatment_history_id: patientData.history_id, clinic_id: clinic_id },
-        fu: {
-            hn_patient_id: patientData.hn_patient_id,
-            appointment_date: getCurrentDateAndTime().date,
-            details: "",
-            date: "",
-            time: "",
-            treatment_history_id: patientData.history_id,
-            clinic_id: clinic_id
-        },
+        fu: { hn_patient_id: patientData.hn_patient_id, appointment_date: getCurrentDateAndTime().date, details: "", date: "", time: "", treatment_history_id: patientData.history_id, clinic_id: clinic_id },
         dx: { hn_patient_id: patientData.hn_patient_id, code: "", description: "", icd_id: "", treatment_history_id: patientData.history_id, clinic_id: clinic_id },
-        rx: {
-            hn_patient_id: patientData.hn_patient_id,
-            medicine_name: "",
-            dosage: "",
-            usage_instruction: "",
-            quantity: "",
-            price: "",
-            meditem_id: "",
-            treatment_history_id: patientData.history_id,
-            clinic_id: clinic_id
-        },
-        lab_results: {
-            hn_patient_id: patientData.hn_patient_id,
-            test_name: "",
-            result_value: "",
-            price: "",
-            status_sen: "",
-            lab_data_id: "",
-            treatment_history_id: patientData.history_id,
-            clinic_id: clinic_id
-        },
-        xr_results: {
-            hn_patient_id: patientData.hn_patient_id,
-            description: "",
-            price: "",
-            rxay_id: "",
-            treatment_history_id: patientData.history_id,
-            clinic_id: clinic_id
-        }
+        rx: { hn_patient_id: patientData.hn_patient_id, medicine_name: "", dosage: "", usage_instruction: "", quantity: "", price: "", meditem_id: "", treatment_history_id: patientData.history_id, clinic_id: clinic_id },
+        lab_results: { hn_patient_id: patientData.hn_patient_id, test_name: "", result_value: "", price: "", status_sen: "", lab_data_id: "", treatment_history_id: patientData.history_id, clinic_id: clinic_id },
+        xr_results: { hn_patient_id: patientData.hn_patient_id, description: "", price: "", rxay_id: "", treatment_history_id: patientData.history_id, clinic_id: clinic_id }
     };
 
     const [formData, setFormData] = useState({
-        cc: [],
-        pi: [],
-        ph: [],
-        pe: [],
-        prx: [],
-        fu: [],
-        dx: [],
-        rx: [],
-        lab_results: [],
-        xr_results: []
+        cc: [], pi: [], ph: [], pe: [], prx: [], fu: [], dx: [], rx: [], lab_results: [], xr_results: []
     });
     const [activeTab, setActiveTab] = useState("cc");
 
@@ -124,7 +81,7 @@ const Pat_checks_fordisease_create_ball = ({ handleLogout }) => {
         const myHeaders = new Headers();
         myHeaders.append("x-api-key", apiKey);
         const requestOptions = { method: "GET", headers: myHeaders, redirect: "follow" };
-        fetch(APi_URL_UAT + "treatment_information&history_id=" + patientData.history_id, requestOptions)
+        fetch(APi_URL_UAT + "treatment_information&history_id=" + patientData.history_id + '&clinic_id=' + clinic_id, requestOptions)
             .then((response) => {
                 if (response.status === 401) {
                     Swal.fire({
@@ -139,7 +96,8 @@ const Pat_checks_fordisease_create_ball = ({ handleLogout }) => {
             .then((result) => setPatientVitals(result.data))
             .catch((error) => console.error(error));
     };
-
+    console.log("clinic_id =", clinic_id);
+    console.log("patientData =", patientData);
     const Update = async (id) => {
         const myHeaders = new Headers();
         myHeaders.append("Content-Type", "application/json");
@@ -204,7 +162,15 @@ const Pat_checks_fordisease_create_ball = ({ handleLogout }) => {
             });
     };
 
-    const handSearch = async (tab, index, searchCode, url) => {
+    const debounce = (func, delay) => {
+        let timeoutId;
+        return (...args) => {
+            clearTimeout(timeoutId);
+            timeoutId = setTimeout(() => func(...args), delay);
+        };
+    };
+
+    const handSearch = debounce(async (tab, index, searchCode, url) => {
         try {
             if (!searchCode || searchCode.trim() === "") {
                 setFormData((prev) => {
@@ -219,17 +185,20 @@ const Pat_checks_fordisease_create_ball = ({ handleLogout }) => {
             const myHeaders = new Headers();
             myHeaders.append("X-API-KEY", apiKey);
             const requestOptions = { method: "GET", headers: myHeaders, redirect: "follow" };
-            const response = await fetch(`${APi_URL_UAT}${url}&search=${encodeURIComponent(searchCode)}`, requestOptions);
+            const response = await fetch(
+                `${APi_URL_UAT}${url}&search=${encodeURIComponent(searchCode)}${tab === "rx" ? `&clinic_id=${clinic_id}` : ""}`,
+                requestOptions
+            );
             const result = await response.json();
 
             if (result.success && result.data.length > 0) {
                 const filteredData = result.data.filter(item => {
                     if (tab === "dx") {
-                        return item.icd10.toLowerCase().includes(searchCode.toLowerCase()) || 
-                               item.icd10name.toLowerCase().includes(searchCode.toLowerCase());
+                        return item.icd10.toLowerCase().includes(searchCode.toLowerCase()) ||
+                            item.icd10name.toLowerCase().includes(searchCode.toLowerCase());
                     } else if (tab === "rx") {
-                        return item.name.toLowerCase().includes(searchCode.toLowerCase()) || 
-                               item.stdcode.toLowerCase().includes(searchCode.toLowerCase());
+                        return item.name.toLowerCase().includes(searchCode.toLowerCase()) ||
+                            item.stdcode.toLowerCase().includes(searchCode.toLowerCase());
                     } else if (tab === "prx") {
                         return item.nameprcd.toLowerCase().includes(searchCode.toLowerCase());
                     } else if (tab === "lab_results") {
@@ -258,7 +227,7 @@ const Pat_checks_fordisease_create_ball = ({ handleLogout }) => {
             console.error("เกิดข้อผิดพลาดในการค้นหาข้อมูล:", error);
             setText("เกิดข้อผิดพลาดในการค้นหา");
         }
-    };
+    }, 300);
 
     const handleICDSelect = (tab, index, icdData) => {
         const newFormData = { ...formData };
@@ -269,14 +238,20 @@ const Pat_checks_fordisease_create_ball = ({ handleLogout }) => {
         setFormData(newFormData);
     };
 
-    const handleMeditemSelect = (tab, index, meditemData) => {
+    const handleMeditemSelect = (tab, index, meditem) => {
         const newFormData = { ...formData };
-        newFormData[tab][index].medicine_name = meditemData.name || "";
-        newFormData[tab][index].meditem_id = meditemData.meditem_id || "";
-        newFormData[tab][index].price = meditemData.price || "";
-        newFormData[tab][index].icdOptions = [];
+        newFormData[tab][index] = {
+            ...newFormData[tab][index],
+            medicine_name: meditem.name || "",
+            meditem_id: meditem.meditem_id || "",
+            price: meditem.price || "",
+            dosage: meditem.medusage || "",        // ←  auto-fill “รหัสวิธีใช้”
+            stdcode: meditem.stdcode || "",        // ←  เก็บ Stdcode ถ้าต้องใช้แสดง/ส่งต่อ
+            icdOptions: [],
+        };
         setFormData(newFormData);
     };
+
 
     const handPrxSelect = (tab, index, PrxData) => {
         const newFormData = { ...formData };
@@ -317,12 +292,12 @@ const Pat_checks_fordisease_create_ball = ({ handleLogout }) => {
             (tab === "lab_results" && field === "test_name") ||
             (tab === "xr_results" && field === "description")
         ) {
-            handSearch(tab, index, value, 
-                tab === "dx" ? "list_icd" : 
-                tab === "rx" ? "list_meditem" : 
-                tab === "prx" ? "list_prcd" : 
-                tab === "lab_results" ? "list_lab" : 
-                "list_rxay"
+            handSearch(tab, index, value,
+                tab === "dx" ? "list_icd" :
+                    tab === "rx" ? "meditem" :
+                        tab === "prx" ? "list_prcd" :
+                            tab === "lab_results" ? "list_lab" :
+                                "list_rxay"
             );
         }
     };
@@ -331,14 +306,14 @@ const Pat_checks_fordisease_create_ball = ({ handleLogout }) => {
         const newFormData = { ...formData };
         const newForm = tab === "fu" ? { ...defaultFormData.fu } :
             tab === "lab_results" ? { ...defaultFormData.lab_results } :
-            tab === "xr_results" ? { ...defaultFormData.xr_results } :
-            tab === "cc" ? { ...defaultFormData.cc } :
-            tab === "pi" ? { ...defaultFormData.pi } :
-            tab === "ph" ? { ...defaultFormData.ph } :
-            tab === "pe" ? { ...defaultFormData.pe } :
-            tab === "prx" ? { ...defaultFormData.prx } :
-            tab === "dx" ? { ...defaultFormData.dx } :
-            tab === "rx" ? { ...defaultFormData.rx } : {};
+                tab === "xr_results" ? { ...defaultFormData.xr_results } :
+                    tab === "cc" ? { ...defaultFormData.cc } :
+                        tab === "pi" ? { ...defaultFormData.pi } :
+                            tab === "ph" ? { ...defaultFormData.ph } :
+                                tab === "pe" ? { ...defaultFormData.pe } :
+                                    tab === "prx" ? { ...defaultFormData.prx } :
+                                        tab === "dx" ? { ...defaultFormData.dx } :
+                                            tab === "rx" ? { ...defaultFormData.rx } : {};
         newFormData[tab].push(newForm);
         setFormData(newFormData);
     };
@@ -357,12 +332,14 @@ const Pat_checks_fordisease_create_ball = ({ handleLogout }) => {
                 newFormData[tab].splice(index, 1);
                 setFormData(newFormData);
     
-                const cleanedData = { data: cleanEmptyArrays(newFormData) };
-                const isDataEmpty = Object.keys(cleanedData.data).length === 0;
-                setSavedData(isDataEmpty ? null : cleanedData);
+                // อย่าเซ็ต savedData ตรงนี้ เพราะจะให้ Modal สรุปผลแสดงก็ต่อเมื่อกด "ตรวจสอบข้อมูล" เท่านั้น
+                // const cleanedData = { data: cleanEmptyArrays(newFormData) };
+                // const isDataEmpty = Object.keys(cleanedData.data).length === 0;
+                // setSavedData(isDataEmpty ? null : cleanedData);
             }
         });
     };
+    
 
     const isEqual = (obj1, obj2) => {
         return JSON.stringify(obj1) === JSON.stringify(obj2);
@@ -398,22 +375,22 @@ const Pat_checks_fordisease_create_ball = ({ handleLogout }) => {
                 } else if (tab === "pe") {
                     if (!entry.description || !entry.price) return { isValid: false, message: `กรุณากรอกข้อมูลในฟิลด์ รายละเอียด และ ราคา สำหรับ ${getTabName(tab)}` };
                 } else if (tab === "prx") {
-                    if (!entry.procedure_name || !entry.quantity || !entry.price || !entry.prcd_id) 
+                    if (!entry.procedure_name || !entry.quantity || !entry.price || !entry.prcd_id)
                         return { isValid: false, message: `กรุณากรอกข้อมูลในฟิลด์ รายการหัตถการ, จำนวน, ราคา และเลือกหัตถการ สำหรับ ${getTabName(tab)}` };
                 } else if (tab === "fu") {
-                    if (!entry.date || !entry.time || !entry.details) 
+                    if (!entry.date || !entry.time || !entry.details)
                         return { isValid: false, message: `กรุณากรอกข้อมูลในฟิลด์ วันที่นัด, เวลานัด และ รายละเอียด สำหรับ ${getTabName(tab)}` };
                 } else if (tab === "dx") {
-                    if (!entry.code || !entry.description || !entry.icd_id) 
+                    if (!entry.code || !entry.description || !entry.icd_id)
                         return { isValid: false, message: `กรุณากรอกข้อมูลในฟิลด์ รหัสโรค, ชื่อโรค และเลือก ICD-10 สำหรับ ${getTabName(tab)}` };
                 } else if (tab === "rx") {
-                    if (!entry.medicine_name || !entry.dosage || !entry.usage_instruction || !entry.quantity || !entry.price || !entry.meditem_id) 
+                    if (!entry.medicine_name || !entry.dosage || !entry.usage_instruction || !entry.quantity || !entry.price || !entry.meditem_id)
                         return { isValid: false, message: `กรุณากรอกข้อมูลในฟิลด์ ชื่อยา, รหัสวิธีใช้, วิธีการใช้ยา, จำนวน, ราคา และเลือกยา สำหรับ ${getTabName(tab)}` };
                 } else if (tab === "lab_results") {
-                    if (!entry.test_name || !entry.result_value || !entry.price || !entry.status_sen || !entry.lab_data_id) 
+                    if (!entry.test_name || !entry.result_value || !entry.price || !entry.status_sen || !entry.lab_data_id)
                         return { isValid: false, message: `กรุณากรอกข้อมูลในฟิลด์ ชื่อการตรวจ, ผลการตรวจ, ราคา, สถานะ LAB และเลือกการตรวจ สำหรับ ${getTabName(tab)}` };
                 } else if (tab === "xr_results") {
-                    if (!entry.description || !entry.price || !entry.rxay_id) 
+                    if (!entry.description || !entry.price || !entry.rxay_id)
                         return { isValid: false, message: `กรุณากรอกข้อมูลในฟิลด์ รายละเอียด, ราคา และเลือก X-Ray สำหรับ ${getTabName(tab)}` };
                 }
             }
@@ -423,7 +400,7 @@ const Pat_checks_fordisease_create_ball = ({ handleLogout }) => {
 
     const handleSave = () => {
         const isDataEmpty = Object.values(formData).every(entries => entries.length === 0);
-    
+
         if (isDataEmpty) {
             Swal.fire({
                 icon: 'warning',
@@ -454,9 +431,6 @@ const Pat_checks_fordisease_create_ball = ({ handleLogout }) => {
         const cleanedData = { data: cleanEmptyArrays(formData) };
         setSavedData(cleanedData);
     };
-
-    const handleCardClick = () => setShowModal(true);
-    const handleClose = () => setShowModal(false);
 
     const getTabIcon = (tab) => {
         const icons = {
@@ -551,14 +525,8 @@ const Pat_checks_fordisease_create_ball = ({ handleLogout }) => {
                         transform: scale(1.1);
                     }
                     @keyframes slideTab {
-                        0% {
-                            opacity: 0.7;
-                            transform: translateY(10px);
-                        }
-                        100% {
-                            opacity: 1;
-                            transform: translateY(-2px);
-                        }
+                        0% { opacity: 0.7; transform: translateY(10px); }
+                        100% { opacity: 1; transform: translateY(-2px); }
                     }
                     .tab-content {
                         position: relative;
@@ -578,14 +546,8 @@ const Pat_checks_fordisease_create_ball = ({ handleLogout }) => {
                         animation: slideContent 0.5s ease-in-out;
                     }
                     @keyframes slideContent {
-                        0% {
-                            opacity: 0;
-                            transform: translateX(-50px);
-                        }
-                        100% {
-                            opacity: 1;
-                            transform: translateX(0);
-                        }
+                        0% { opacity: 0; transform: translateX(-50px); }
+                        100% { opacity: 1; transform: translateX(0); }
                     }
                     .dropdown-menu {
                         z-index: 10000 !important;
@@ -594,11 +556,29 @@ const Pat_checks_fordisease_create_ball = ({ handleLogout }) => {
                         border-radius: 4px;
                         background-color: #fff;
                         width: 100%;
-                        max-width: 500px;
+                        max-width: 700px;
                         padding: 0;
                         position: absolute;
                         top: 100%;
                         left: 0;
+                        max-height: 350px;
+                        overflow-y: auto;
+                        scrollbar-width: thin;
+                        scrollbar-color: #6c757d #f8f9fa;
+                    }
+                    .dropdown-menu::-webkit-scrollbar {
+                        width: 8px;
+                    }
+                    .dropdown-menu::-webkit-scrollbar-track {
+                        background: #f8f9fa;
+                        border-radius: 4px;
+                    }
+                    .dropdown-menu::-webkit-scrollbar-thumb {
+                        background: #6c757d;
+                        border-radius: 4px;
+                    }
+                    .dropdown-menu::-webkit-scrollbar-thumb:hover {
+                        background: #5a6268;
                     }
                     .list-group-item-action {
                         padding: 8px 12px;
@@ -636,16 +616,86 @@ const Pat_checks_fordisease_create_ball = ({ handleLogout }) => {
                         right: -5px;
                         font-size: 1.00rem;
                     }
+                    .patient-info-section {
+                        background: linear-gradient(180deg, #ffffff, #f8f9fa);
+                        border-radius: 8px;
+                        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+                        padding: 1.5rem;
+                    }
+                    .vital-signs-card, .other-info, .allergies-section {
+                        background: #f8f9fa;
+                        border-radius: 8px;
+                        padding: 1.5rem;
+                        margin-bottom: 1rem;
+                    }
+                    .allergy-card {
+                        transition: transform 0.2s ease;
+                    }
+                    .allergy-card:hover {
+                        transform: translateY(-2px);
+                        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                    }
+ 
+                /* ในส่วน <style> ของโค้ด หรือในไฟล์ CSS แยก */
+                .modal-extra-large {
+                  max-width: 99% !important;
+                  width: 1900px;
+                  margin: 0.25rem auto;
+                  height: 95vh;
+                  display: flex;
+                  flex-direction: column;
+                }
+                                
+                /* ปรับสำหรับหน้าจอขนาดกลาง */
+                @media (max-width: 1600px) {
+                  .modal-extra-large {
+                    max-width: 95% !important;
+                    width: auto;
+                    height: 85vh;
+                  }
+                }
+                                
+                /* ปรับสำหรับหน้าจอขนาดเล็ก (แท็บเล็ต/มือถือ) */
+                @media (max-width: 1200px) {
+                  .modal-extra-large {
+                    max-width: 98% !important;
+                    margin: 0.25rem auto;
+                    height: 95vh; /* ใช้ความสูงเกือบเต็มหน้าจอในมือถือ */
+                  }
+                }
+                                
+                /* สไตล์ scrollbar */
+                .modal-body {
+                  scrollbar-width: thin;
+                  scrollbar-color: #6c757d #f8f9fa;
+                }
+                                
+                .modal-body::-webkit-scrollbar {
+                  width: 10px; /* เพิ่มขนาด scrollbar เพื่อให้ใช้งานง่าย */
+                }
+                                
+                .modal-body::-webkit-scrollbar-track {
+                  background: #f8f9fa;
+                  border-radius: 5px;
+                }
+                                
+                .modal-body::-webkit-scrollbar-thumb {
+                  background: #6c757d;
+                  border-radius: 5px;
+                }
+                                
+                .modal-body::-webkit-scrollbar-thumb:hover {
+                  background: #5a6268;
+                }
+                  
                 `}
             </style>
 
-            <div className="row mb-4">
+            <div className="row mb-1">
                 <div className="col-12">
                     <div className="bg-white text-white border-bottom shadow-sm">
-                        <div className="card-body position-relative p-4">
-                            <div className="position-absolute opacity-20" style={{ right: '0', top: '0' }}>
-                                <i className="bi bi-clipboard-pulse" style={{ fontSize: '4rem' }}></i>
-                            </div>
+                        <div className="card-body position-relative ">
+                            
                             <h2 className="text-start display-6 fw-semibold text-titlepage">แพทย์ตรวจโรค</h2>
                             <p className="mb-0">หน้าวินิจสัยโรค (ระบบแพทย์ตรวจโรค) หากรายไหนไม่มีการตรวจ หรือข้อมูล ให้ลบรายการออก แต่ถ้าหากมีมากกว่า 1 รายการ ให้กด ปุ่ม เพิ่มรายการใหม่</p>
                         </div>
@@ -654,243 +704,437 @@ const Pat_checks_fordisease_create_ball = ({ handleLogout }) => {
             </div>
 
             <div className="row mb-4 g-3">
-                <div className="col-md-6">
-                    <div className="card h-100 border border-1 shadow-sm hover-shadow-lg transition-all duration-300">
-                        <div className="card-body d-flex flex-column">
-                            <div className="d-flex align-items-center mb-3">
-                                <div className="avatar-circle bg-primary text-white me-3 d-flex align-items-center justify-content-center" style={{ width: '48px', height: '48px', borderRadius: '50%' }}>
-                                    <i className="bi bi-person"></i>
-                                </div>
-                                <div>
-                                    <h4 className="card-title mb-0 text-primary">{patientData.thai_firstname} {patientData.thai_lastname}</h4>
-                                    <span className="badge bg-light text-secondary">คิวที่: {patientData.queue_number}</span>
-                                </div>
-                            </div>
-                            <div className="patient-info-item mb-2 d-flex align-items-center">
-                                <div className="icon-box me-2 text-primary">
-                                    <i className="bi bi-fingerprint"></i>
-                                </div>
-                                <div>
-                                    <small className="text-muted">รหัสผู้ป่วย</small>
-                                    <p className="mb-0 fw-medium">{patientData.hn_patient_id}</p>
+                <div className="col-12">
+                    <div className="patient-info-section">
+                        {/* Patient Header - Combined Info */}
+                        <div className="row mb-4">
+                            <div className="col-12">
+                                <div className="card border border-1 shadow-sm">
+                                    <div className="card-body">
+                                        <div className="row align-items-center">
+                                            <div className="col-md-8">
+                                                <div className="d-flex align-items-center">
+                                                    <div className="avatar-circle bg-primary text-white me-3 d-flex align-items-center justify-content-center" style={{ width: '56px', height: '56px', borderRadius: '50%' }}>
+                                                        <i className="bi bi-person fs-4"></i>
+                                                    </div>
+                                                    <div>
+                                                        <h3 className="mb-1 text-primary fw-bold">{patientData.thai_firstname} {patientData.thai_lastname}</h3>
+                                                        <div className="d-flex align-items-center gap-3">
+                                                            <span className="badge bg-primary fs-6 px-3 py-2">คิวที่: {patientData.queue_number}</span>
+                                                            <div className="d-flex align-items-center text-muted">
+                                                                <i className="bi bi-fingerprint me-1"></i>
+                                                                <span className="fw-medium">{patientData.hn_patient_id}</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div className="col-md-4 text-md-end">
+                                                <div className="d-flex align-items-center justify-content-md-end">
+                                                    <div className="avatar-circle bg-info text-white me-2 d-flex align-items-center justify-content-center" style={{ width: '40px', height: '40px', borderRadius: '50%' }}>
+                                                        <i className="bi bi-calendar3"></i>
+                                                    </div>
+                                                    <div className="text-start">
+                                                        <small className="text-muted d-block">วันที่เข้ารับบริการ</small>
+                                                        <span className="fw-medium">{getCurrentDateAndTime().date}</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </div>
+                        {/* ข้อมูลผู้ป่วย - เรียบง่าย เบสิค อ่านง่าย */}
+                        {activePatient && (
+                            <div className="row g-3">
+                                {/* Vital Signs Section */}
+                                <div className="col-12  col-xl-4">
+                                    <div className="card h-100 border-0 shadow-sm" style={{ maxHeight: '300px' }}>
+                                        <div className="card-header" style={{ background: 'linear-gradient(180deg, #f8f9fa, #e9ecef)', padding: '1rem' }}>
+                                            <h5 className="mb-0 text-dark d-flex align-items-center">
+                                                <i className="bi bi-activity me-2"></i> สัญญาณชีพ
+                                            </h5>
+                                        </div>
+                                        <div className="card-body p-3">
+                                            {patient_vitals?.details?.patient_vitals?.map((vital, index) => (
+                                                <div key={index} className="vital-grid">
+                                                    <div className="row g-2">
+                                                        {/* น้ำหนัก */}
+                                                        <div className="col-6">
+                                                            <div className="vital-item p-2 border rounded" style={{ backgroundColor: '#f8f9fa', borderColor: '#dee2e6 !important' }}>
+                                                                <div className="d-flex align-items-center">
+                                                                    <i className="bi bi-speedometer2 text-primary me-2"></i>
+                                                                    <div className="flex-grow-1">
+                                                                        <div className="small">
+                                                                            <span className="text-muted">น้ำหนัก:</span> <span className="fw-bold">{vital.bw} kg</span>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
 
-                <div className="col-md-6">
-                    <div className="card h-100 border border-1 shadow-sm hover-shadow-lg transition-all duration-300" onClick={handleCardClick} style={{ cursor: 'pointer' }}>
-                        <div className="card-body d-flex flex-column">
-                            <div className="d-flex align-items-center mb-3">
-                                <div className="avatar-circle bg-info text-white me-3 d-flex align-items-center justify-content-center" style={{ width: '48px', height: '48px', borderRadius: '50%' }}>
-                                    <i className="bi bi-journal-medical"></i>
+                                                        {/* ส่วนสูง */}
+                                                        <div className="col-6">
+                                                            <div className="vital-item p-2 border rounded" style={{ backgroundColor: '#f8f9fa', borderColor: '#dee2e6 !important' }}>
+                                                                <div className="d-flex align-items-center">
+                                                                    <i className="bi bi-arrows-vertical text-primary me-2"></i>
+                                                                    <div className="flex-grow-1">
+                                                                        <div className="small">
+                                                                            <span className="text-muted">ส่วนสูง:</span> <span className="fw-bold">{vital.height} cm</span>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        {/* BMI */}
+                                                        <div className="col-6">
+                                                            <div className="vital-item p-2 border rounded" style={{ backgroundColor: '#f8f9fa', borderColor: '#dee2e6 !important' }}>
+                                                                <div className="d-flex align-items-center">
+                                                                    <i className="bi bi-calculator text-warning me-2"></i>
+                                                                    <div className="flex-grow-1">
+                                                                        <div className="small">
+                                                                            <span className="text-muted">BMI:</span> <span className="fw-bold">{vital.bmi}</span>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        {/* อุณหภูมิ */}
+                                                        <div className="col-6">
+                                                            <div className="vital-item p-2 border rounded" style={{ backgroundColor: '#f8f9fa', borderColor: '#dee2e6 !important' }}>
+                                                                <div className="d-flex align-items-center">
+                                                                    <i className="bi bi-thermometer-half text-danger me-2"></i>
+                                                                    <div className="flex-grow-1">
+                                                                        <div className="small">
+                                                                            <span className="text-muted">อุณหภูมิ:</span> <span className="fw-bold">{vital.temp}°C</span>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        {/* ชีพจร */}
+                                                        <div className="col-6">
+                                                            <div className="vital-item p-2 border rounded" style={{ backgroundColor: '#f8f9fa', borderColor: '#dee2e6 !important' }}>
+                                                                <div className="d-flex align-items-center">
+                                                                    <i className="bi bi-heart-pulse text-success me-2"></i>
+                                                                    <div className="flex-grow-1">
+                                                                        <div className="small">
+                                                                            <span className="text-muted">ชีพจร:</span> <span className="fw-bold">{vital.pulse} bpm</span>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        {/* การหายใจ */}
+                                                        <div className="col-6">
+                                                            <div className="vital-item p-2 border rounded" style={{ backgroundColor: '#f8f9fa', borderColor: '#dee2e6 !important' }}>
+                                                                <div className="d-flex align-items-center">
+                                                                    <i className="bi bi-lungs text-info me-2"></i>
+                                                                    <div className="flex-grow-1">
+                                                                        <div className="small">
+                                                                            <span className="text-muted">การหายใจ:</span> <span className="fw-bold">{vital.respiration} bpm</span>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        {/* ความดันโลหิต */}
+                                                        <div className="col-12">
+                                                            <div className="vital-item p-2 border rounded" style={{ backgroundColor: '#f8f9fa', borderColor: '#dee2e6 !important' }}>
+                                                                <div className="d-flex align-items-center">
+                                                                    <i className="bi bi-droplet-fill text-danger me-2"></i>
+                                                                    <div className="flex-grow-1">
+                                                                        <div className="small">
+                                                                            <span className="text-muted">ความดันโลหิต:</span> <span className="fw-bold fs-6">{vital.bp_systolic}/{vital.bp_diastolic} mmHg</span>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
                                 </div>
-                                <div>
-                                    <h4 className="card-title mb-0 text-info">ข้อมูลผู้ป่วย/ประวัติแพ้ยา</h4>
-                                    <span className="badge bg-light text-secondary">{getCurrentDateAndTime().date}</span>
+
+                                {/* ข้อมูลเพิ่มเติม */}
+                                <div className="col-12  col-xl-4">
+                                    <div className="card h-100 border-0 shadow-sm" style={{ maxHeight: '300px' }}>
+                                        <div className="card-header" style={{ background: 'linear-gradient(180deg, #f8f9fa, #e9ecef)', padding: '1rem' }}>
+                                            <h5 className="mb-0 text-dark d-flex align-items-center">
+                                                <i className="bi bi-clipboard-data me-2"></i> ข้อมูลเพิ่มเติม
+                                            </h5>
+                                        </div>
+                                        <div className="card-body p-3">
+                                            {patient_vitals?.details?.patient_vitals?.map((vital, index) => (
+                                                <div key={index} className="additional-info-grid">
+                                                    <div className="row g-2">
+                                                        {/* แถวที่ 1 */}
+                                                        <div className="col-6">
+                                                            <div className="info-item p-2 border rounded" style={{ backgroundColor: '#f8f9fa', borderColor: '#dee2e6 !important' }}>
+                                                                <div className="d-flex align-items-center">
+                                                                    <i className="bi bi-virus text-success me-2"></i>
+                                                                    <div className="flex-grow-1">
+                                                                        <div className="small">
+                                                                            <span className="text-muted">สถานะ TB:</span> <span className="fw-bold">{vital.tb_status}</span>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        <div className="col-6">
+                                                            <div className="info-item p-2 border rounded" style={{ backgroundColor: '#f8f9fa', borderColor: '#dee2e6 !important' }}>
+                                                                <div className="d-flex align-items-center">
+                                                                    <i className="bi bi-eye text-primary me-2"></i>
+                                                                    <div className="flex-grow-1">
+                                                                        <div className="small">
+                                                                            <span className="text-muted">สายตา:</span> <span className="fw-bold">{vital.eye_exam}</span>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        {/* แถวที่ 2 */}
+                                                        <div className="col-6">
+                                                            <div className="info-item p-2 border rounded" style={{ backgroundColor: '#f8f9fa', borderColor: '#dee2e6 !important' }}>
+                                                                <div className="d-flex align-items-center">
+                                                                    <i className="bi bi-search text-warning me-2"></i>
+                                                                    <div className="flex-grow-1">
+                                                                        <div className="small">
+                                                                            <span className="text-muted">การคัดกรอง:</span> <span className="fw-bold">{vital.screening}</span>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        <div className="col-6">
+                                                            <div className="info-item p-2 border rounded" style={{ backgroundColor: '#f8f9fa', borderColor: '#dee2e6 !important' }}>
+                                                                <div className="d-flex align-items-center">
+                                                                    <i className="bi bi-cup-straw text-danger me-2"></i>
+                                                                    <div className="flex-grow-1">
+                                                                        <div className="small">
+                                                                            <span className="text-muted">แอลกอฮอล์:</span> <span className="fw-bold">{vital.alcohol_status}</span>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        {/* แถวที่ 3 */}
+                                                        <div className="col-6">
+                                                            <div className="info-item p-2 border rounded" style={{ backgroundColor: '#f8f9fa', borderColor: '#dee2e6 !important' }}>
+                                                                <div className="d-flex align-items-center">
+                                                                    <i className="bi bi-fire text-secondary me-2"></i>
+                                                                    <div className="flex-grow-1">
+                                                                        <div className="small">
+                                                                            <span className="text-muted">การสูบบุหรี่:</span> <span className="fw-bold">{vital.smoking_status}</span>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        <div className="col-6">
+                                                            <div className="info-item p-2 border rounded" style={{ backgroundColor: '#f8f9fa', borderColor: '#dee2e6 !important' }}>
+                                                                <div className="d-flex align-items-center">
+                                                                    <i className="bi bi-person-hearts text-info me-2"></i>
+                                                                    <div className="flex-grow-1">
+                                                                        <div className="small">
+                                                                            <span className="text-muted">ตั้งครรภ์:</span> <span className="fw-bold">{vital.pregnancy_status}</span>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        {/* แถวที่ 4 */}
+                                                        <div className="col-6">
+                                                            <div className="info-item p-2 border rounded" style={{ backgroundColor: '#f8f9fa', borderColor: '#dee2e6 !important' }}>
+                                                                <div className="d-flex align-items-center">
+                                                                    <i className="bi bi-activity text-success me-2"></i>
+                                                                    <div className="flex-grow-1">
+                                                                        <div className="small">
+                                                                            <span className="text-muted">GFR:</span> <span className="fw-bold">{vital.gfr_status}</span>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        <div className="col-6">
+                                                            <div className="info-item p-2 border rounded" style={{ backgroundColor: '#f8f9fa', borderColor: '#dee2e6 !important' }}>
+                                                                <div className="d-flex align-items-center">
+                                                                    <i className="bi bi-clipboard-heart text-info me-2"></i>
+                                                                    <div className="flex-grow-1">
+                                                                        <div className="small">
+                                                                            <span className="text-muted">เหตุผลมาพบ:</span> <span className="fw-bold">{vital.visit_reason}</span>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* ประวัติการแพ้ยา */}
+                                <div className="col-12  col-xl-4">
+                                    <div className="card h-100 border-0 shadow-sm" style={{ maxHeight: '280px' }}>
+                                        <div className="card-header" style={{ background: 'linear-gradient(180deg, #f8f9fa, #e9ecef)', padding: '1rem' }}>
+                                            <h5 className="mb-0 text-danger d-flex align-items-center">
+                                                <i className="bi bi-exclamation-triangle me-2"></i> ประวัติการแพ้ยา
+                                            </h5>
+                                        </div>
+                                        <div className="card-body p-0 overflow-auto" style={{ maxHeight: '500px' }}>
+
+                                            <div className="p-3">
+                                                {activePatient.drug_allergies.length > 0 ? (
+                                                    activePatient.drug_allergies.map((allergy, index) => (
+                                                        <>
+                                                            <div key={index} className="mb-3 border border-danger rounded p-3" style={{ backgroundColor: '#fdf2f2' }}>
+                                                                <div className="d-flex align-items-center mb-2">
+                                                                    <div className="badge bg-danger me-2 p-1">
+                                                                        <i className="bi bi-capsule"></i>
+                                                                    </div>
+                                                                    <div>
+                                                                        <h6 className="mb-0 fw-bold text-danger">{allergy.med_name}</h6>
+                                                                        <small className="text-muted">รหัส: {allergy.drug_code}</small>
+                                                                    </div>
+                                                                </div>
+
+                                                                <div className="mb-2">
+                                                                    <span className="badge bg-warning text-dark">
+                                                                        ระดับ: {allergy.severity_description}
+                                                                    </span>
+                                                                </div>
+
+                                                                <div className="mb-2">
+                                                                    <div className="small">
+                                                                        <span className="text-muted">รายละเอียด:</span> {allergy.details}
+                                                                    </div>
+                                                                </div>
+
+                                                                <div className="mb-2">
+                                                                    <div className="small">
+                                                                        <span className="text-muted">ชื่อการแพ้:</span> {allergy.allergy_name}
+                                                                    </div>
+                                                                </div>
+
+                                                                <div>
+                                                                    <div className="small">
+                                                                        <span className="text-muted">แหล่งที่มา:</span> {allergy.history_source_name}
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div key={index} className="mb-3 border border-danger rounded p-3" style={{ backgroundColor: '#fdf2f2' }}>
+                                                                <div className="d-flex align-items-center mb-2">
+                                                                    <div className="badge bg-danger me-2 p-1">
+                                                                        <i className="bi bi-capsule"></i>
+                                                                    </div>
+                                                                    <div>
+                                                                        <h6 className="mb-0 fw-bold text-danger">{allergy.med_name}</h6>
+                                                                        <small className="text-muted">รหัส: {allergy.drug_code}</small>
+                                                                    </div>
+                                                                </div>
+
+                                                                <div className="mb-2">
+                                                                    <span className="badge bg-warning text-dark">
+                                                                        ระดับ: {allergy.severity_description}
+                                                                    </span>
+                                                                </div>
+
+                                                                <div className="mb-2">
+                                                                    <div className="small">
+                                                                        <span className="text-muted">รายละเอียด:</span> {allergy.details}
+                                                                    </div>
+                                                                </div>
+
+                                                                <div className="mb-2">
+                                                                    <div className="small">
+                                                                        <span className="text-muted">ชื่อการแพ้:</span> {allergy.allergy_name}
+                                                                    </div>
+                                                                </div>
+
+                                                                <div>
+                                                                    <div className="small">
+                                                                        <span className="text-muted">แหล่งที่มา:</span> {allergy.history_source_name}
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </>
+                                                    ))
+
+                                                ) : (
+                                                    <div className="alert alert-success border-success">
+                                                        <div className="d-flex align-items-center">
+                                                            <i className="bi bi-check-circle-fill me-2 fs-5"></i>
+                                                            <div>
+                                                                <h6 className="mb-0 fw-bold">ไม่พบประวัติการแพ้ยา</h6>
+                                                                <small className="text-muted">ผู้ป่วยไม่มีประวัติการแพ้ยาที่บันทึกไว้</small>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                )}
+                                            </div>
+
+
+
+                                        </div>
+                                    </div>
+
                                 </div>
                             </div>
-                            <div className="patient-info-item mb-2 d-flex align-items-center">
-                                <div className="icon-box me-2 text-info">
-                                    <i className="bi bi-clipboard-data"></i>
-                                </div>
-                                <div>
-                                    <small className="text-muted">ดูข้อมูลเพิ่มเติม</small>
-                                    <p className="mb-0 fw-medium">คลิกเพื่อแสดงประวัติการแพ้ยาและสัญญาณชีพ</p>
-                                </div>
-                            </div>
-                            <div className="mt-auto align-self-end">
-                                <i className="bi bi-chevron-right text-info fs-4"></i>
-                            </div>
-                        </div>
+                        )}
                     </div>
                 </div>
             </div>
 
-            {activePatient && (
-                <Modal show={showModal} onHide={handleClose} size="lg" className="fade" centered>
-                    <Modal.Header closeButton className="bg-info text-white">
-                        <Modal.Title>
-                            <i className="bi bi-person-vcard me-2"></i>
-                            {patientData.hn_patient_id} - {patientData.thai_firstname} {patientData.thai_lastname}
-                        </Modal.Title>
-                    </Modal.Header>
-                    <Modal.Body className="px-3 py-2">
-                        <div className="row">
-                            <div className="col-lg-6">
-                                <div className="vital-signs-card p-3 bg-light rounded-3">
-                                    <h5 className="text-info border-bottom d-flex align-items-center">
-                                        <i className="bi bi-activity me-2"></i> สัญญาณชีพ
-                                    </h5>
-                                    {patient_vitals?.details?.patient_vitals?.map((vital, index) => (
-                                        <div key={index} className="vital-grid">
-                                            <div className="row g-3">
-                                                <div className="col-6">
-                                                    <div className="vital-item p-2 bg-white rounded shadow-sm">
-                                                        <small className="text-muted d-block">Weight</small>
-                                                        <span className="fs-5 fw-medium">{vital.bw} <small>kg</small></span>
-                                                    </div>
-                                                </div>
-                                                <div className="col-6">
-                                                    <div className="vital-item p-2 bg-white rounded shadow-sm">
-                                                        <small className="text-muted d-block">Height</small>
-                                                        <span className="fs-5 fw-medium">{vital.height} <small>cm</small></span>
-                                                    </div>
-                                                </div>
-                                                <div className="col-6">
-                                                    <div className="vital-item p-2 bg-white rounded shadow-sm">
-                                                        <small className="text-muted d-block">BMI</small>
-                                                        <span className="fs-5 fw-medium">{vital.bmi}</span>
-                                                    </div>
-                                                </div>
-                                                <div className="col-6">
-                                                    <div className="vital-item p-2 bg-white rounded shadow-sm">
-                                                        <small className="text-muted d-block">Temperature</small>
-                                                        <span className="fs-5 fw-medium">{vital.temp}°C</span>
-                                                    </div>
-                                                </div>
-                                                <div className="col-6">
-                                                    <div className="vital-item p-2 bg-white rounded shadow-sm">
-                                                        <small className="text-muted d-block">Pulse</small>
-                                                        <span className="fs-5 fw-medium">{vital.pulse} <small>bpm</small></span>
-                                                    </div>
-                                                </div>
-                                                <div className="col-6">
-                                                    <div className="vital-item p-2 bg-white rounded shadow-sm">
-                                                        <small className="text-muted d-block">Respiration</small>
-                                                        <span className="fs-5 fw-medium">{vital.respiration} <small>bpm</small></span>
-                                                    </div>
-                                                </div>
-                                                <div className="col-6">
-                                                    <div className="vital-item p-2 bg-white rounded shadow-sm">
-                                                        <small className="text-muted d-block">Blood Pressure</small>
-                                                        <span className="fs-5 fw-medium">{vital.bp_systolic}/{vital.bp_diastolic} <small>mmHg</small></span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
-                                <div className="other-info p-3 mb-2 bg-light rounded-3">
-                                    <h5 className="text-info border-bottom pb-2">
-                                        <i className="bi bi-info-circle me-2"></i> ข้อมูลเพิ่มเติม
-                                    </h5>
-                                    {patient_vitals?.details?.patient_vitals?.map((vital, index) => (
-                                        <div key={index} className="row g-2">
-                                            <div className="col-6">
-                                                <small className="text-muted d-block">TB Status</small>
-                                                <p className="mb-2">{vital.tb_status}</p>
-                                            </div>
-                                            <div className="col-6">
-                                                <small className="text-muted d-block">Eye Exam</small>
-                                                <p className="mb-2">{vital.eye_exam}</p>
-                                            </div>
-                                            <div className="col-6">
-                                                <small className="text-muted d-block">Screening</small>
-                                                <p className="mb-2">{vital.screening}</p>
-                                            </div>
-                                            <div className="col-6">
-                                                <small className="text-muted d-block">Alcohol Status</small>
-                                                <p className="mb-2">{vital.alcohol_status}</p>
-                                            </div>
-                                            <div className="col-6">
-                                                <small className="text-muted d-block">Smoking Status</small>
-                                                <p className="mb-2">{vital.smoking_status}</p>
-                                            </div>
-                                            <div className="col-6">
-                                                <small className="text-muted d-block">Pregnancy Status</small>
-                                                <p className="mb-2">{vital.pregnancy_status}</p>
-                                            </div>
-                                            <div className="col-6">
-                                                <small className="text-muted d-block">GFR Status</small>
-                                                <p className="mb-2">{vital.gfr_status}</p>
-                                            </div>
-                                            <div className="col-6">
-                                                <small className="text-muted d-block">Visit Reason</small>
-                                                <p className="mb-2">{vital.visit_reason}</p>
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-                            <div className="col-lg-6">
-                                <div className="allergies-section">
-                                    <h5 className="text-danger mb-3 border-bottom pb-2 d-flex align-items-center">
-                                        <i className="bi bi-exclamation-triangle me-2"></i> ประวัติการแพ้ยา
-                                    </h5>
-                                    {activePatient.drug_allergies.length > 0 ? (
-                                        activePatient.drug_allergies.map((allergy, index) => (
-                                            <div key={index} className="allergy-card mb-3 border-start border-4 border-danger rounded-3 shadow-sm p-3 bg-light">
-                                                <div className="d-flex align-items-center mb-2">
-                                                    <div className="badge bg-danger me-2">
-                                                        <i className="bi bi-capsule"></i>
-                                                    </div>
-                                                    <h6 className="mb-0 fw-semibold">{allergy.med_name}</h6>
-                                                </div>
-                                                <div className="d-flex flex-wrap gap-2 mb-2">
-                                                    <span className="badge bg-light text-dark">รหัส: {allergy.drug_code}</span>
-                                                    <span className="badge bg-warning text-dark">ระดับความรุนแรง: {allergy.severity_description}</span>
-                                                </div>
-                                                <div className="allergy-details">
-                                                    <small className="text-muted d-block">รายละเอียด</small>
-                                                    <p className="mb-1">{allergy.details}</p>
-                                                    <small className="text-muted d-block mt-2">ชื่อการแพ้</small>
-                                                    <p className="mb-1">{allergy.allergy_name}</p>
-                                                    <small className="text-muted d-block mt-2">แหล่งที่มาของประวัติ</small>
-                                                    <p className="mb-1">{allergy.history_source_name}</p>
-                                                </div>
-                                            </div>
-                                        ))
-                                    ) : (
-                                        <div className="alert alert-success">
-                                            <i className="bi bi-check-circle me-2"></i> ไม่พบประวัติการแพ้ยา
-                                        </div>
-                                    )}
-                                </div>
-                            </div>
-                        </div>
-                    </Modal.Body>
-                    <Modal.Footer>
-                        <Button variant="secondary" onClick={handleClose} className="px-4">
-                            <i className="bi bi-x-lg me-2"></i> ปิด
-                        </Button>
-                    </Modal.Footer>
-                </Modal>
-            )}
 
-<div className="card border-0 shadow-sm rounded-3 mb-4">
-    <div className="card-body p-0">
-        <nav className="diagnosis-tabs">
-            <div className="nav nav-tabs nav-fill border-0" role="tablist">
-                {Object.keys(formData).map((tab, index) => (
-                    <button
-                        key={index}
-                        className={`nav-link border-0 py-3 ${activeTab === tab ? "active" : ""}`}
-                        onClick={() => handleTabChange(tab)}
-                        id={`tab-${tab}`}
-                        data-bs-toggle="tab"
-                        data-bs-target={`#tab-pane-${tab}`}
-                        type="button"
-                        role="tab"
-                        aria-controls={`tab-pane-${tab}`}
-                        aria-selected={activeTab === tab}
-                    >
-                        <div className="d-flex flex-column align-items-center position-relative">
-                            <i className={`bi ${getTabIcon(tab)} mb-1`} style={{ fontSize: '1.5rem' }}></i>
-                            <span>{getTabName(tab)}</span>
-                            {savedData && savedData.data[tab] && savedData.data[tab].length > 0 && (
-                                <span className="tab-count">
-                                    {savedData.data[tab].length}
-                                </span>
-                            )}
+            <div className="card border-0 shadow-sm rounded-3 mb-4">
+                <div className="card-body p-0">
+                    <nav className="diagnosis-tabs">
+                        <div className="nav nav-tabs nav-fill border-0" role="tablist">
+                            {Object.keys(formData).map((tab, index) => (
+                                <button
+                                    key={index}
+                                    className={`nav-link border-0 py-3 ${activeTab === tab ? "active" : ""}`}
+                                    onClick={() => handleTabChange(tab)}
+                                    id={`tab-${tab}`}
+                                    data-bs-toggle="tab"
+                                    data-bs-target={`#tab-pane-${tab}`}
+                                    type="button"
+                                    role="tab"
+                                    aria-controls={`tab-pane-${tab}`}
+                                    aria-selected={activeTab === tab}
+                                >
+                                    <div className="d-flex flex-column align-items-center position-relative">
+                                        <i className={`bi ${getTabIcon(tab)} mb-1`} style={{ fontSize: '1.5rem' }}></i>
+                                        <span>{getTabName(tab)}</span>
+                                        {savedData && savedData.data[tab] && savedData.data[tab].length > 0 && (
+                                            <span className="tab-count">
+                                                {savedData.data[tab].length}
+                                            </span>
+                                        )}
+                                    </div>
+                                </button>
+                            ))}
                         </div>
-                    </button>
-                ))}
+                    </nav>
+                </div>
             </div>
-        </nav>
-    </div>
-</div>
 
             <div className="tab-content">
                 {Object.keys(formData).map((tab, index) => (
@@ -1028,25 +1272,32 @@ const Pat_checks_fordisease_create_ball = ({ handleLogout }) => {
                                                             {form.icdOptions && form.icdOptions.length > 0 && (
                                                                 <ul
                                                                     className="list-group dropdown-menu show"
-                                                                    style={{
-                                                                        position: "absolute",
-                                                                        top: "100%",
-                                                                        left: 0,
-                                                                        zIndex: 10000,
-                                                                        width: "100%",
-                                                                        boxShadow: "0 4px 12px rgba(0, 0, 0, 0.2)",
-                                                                        borderRadius: "4px",
-                                                                        backgroundColor: "#fff",
-                                                                        border: "1px solid #dee2e6",
-                                                                    }}
                                                                 >
                                                                     {form.icdOptions.map((prx) => (
                                                                         <li
                                                                             key={prx.id}
                                                                             className="list-group-item list-group-item-action py-2"
                                                                             onClick={() => handPrxSelect(tab, formIndex, prx)}
+                                                                            style={{
+                                                                                display: 'flex',
+                                                                                alignItems: 'center',
+                                                                                padding: '10px 15px',
+                                                                                borderLeft: '3px solid #0891b2',
+                                                                                transition: 'all 0.2s ease',
+                                                                                cursor: 'pointer'
+                                                                            }}
                                                                         >
-                                                                            {prx.nameprcd}
+                                                                            <div style={{ display: 'flex', alignItems: 'center', width: '100%' }}>
+                                                                                <i className="bi bi-clipboard2-pulse" style={{ color: '#0891b2', marginRight: '10px', fontSize: '1.1rem' }}></i>
+                                                                                <div>
+                                                                                    <div style={{ fontWeight: '500', color: '#334155' }}>{prx.nameprcd}</div>
+                                                                                    {prx.priceprcd && (
+                                                                                        <div style={{ fontSize: '0.85rem', color: '#64748b', marginTop: '2px' }}>
+                                                                                            ราคา {prx.priceprcd} บาท
+                                                                                        </div>
+                                                                                    )}
+                                                                                </div>
+                                                                            </div>
                                                                         </li>
                                                                     ))}
                                                                 </ul>
@@ -1143,25 +1394,32 @@ const Pat_checks_fordisease_create_ball = ({ handleLogout }) => {
                                                             {form.icdOptions && form.icdOptions.length > 0 && (
                                                                 <ul
                                                                     className="list-group dropdown-menu show"
-                                                                    style={{
-                                                                        position: "absolute",
-                                                                        top: "100%",
-                                                                        left: 0,
-                                                                        zIndex: 10000,
-                                                                        width: "100%",
-                                                                        boxShadow: "0 4px 12px rgba(0, 0, 0, 0.2)",
-                                                                        borderRadius: "4px",
-                                                                        backgroundColor: "#fff",
-                                                                        border: "1px solid #dee2e6",
-                                                                    }}
                                                                 >
                                                                     {form.icdOptions.map((icd) => (
                                                                         <li
                                                                             key={icd.id}
                                                                             className="list-group-item list-group-item-action py-2"
                                                                             onClick={() => handleICDSelect(tab, formIndex, icd)}
+                                                                            style={{
+                                                                                display: 'flex',
+                                                                                alignItems: 'center',
+                                                                                padding: '10px 15px',
+                                                                                borderLeft: '3px solid #0284c7',
+                                                                                transition: 'all 0.2s ease',
+                                                                                cursor: 'pointer'
+                                                                            }}
                                                                         >
-                                                                            <strong>{icd.icd10}</strong> - {icd.icd10name}
+                                                                            <div style={{ display: 'flex', alignItems: 'center', width: '100%' }}>
+                                                                                <i className="bi bi-clipboard2-check" style={{ color: '#0284c7', marginRight: '10px', fontSize: '1.1rem' }}></i>
+                                                                                <div>
+                                                                                    <div style={{ fontWeight: '500', color: '#0f172a', fontSize: '1.05rem' }}>
+                                                                                        {icd.icd10}
+                                                                                    </div>
+                                                                                    <div style={{ fontSize: '0.9rem', color: '#64748b', marginTop: '2px' }}>
+                                                                                        {icd.icd10name}
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
                                                                         </li>
                                                                     ))}
                                                                 </ul>
@@ -1204,17 +1462,6 @@ const Pat_checks_fordisease_create_ball = ({ handleLogout }) => {
                                                             {form.icdOptions && form.icdOptions.length > 0 && (
                                                                 <ul
                                                                     className="list-group dropdown-menu show"
-                                                                    style={{
-                                                                        position: "absolute",
-                                                                        top: "100%",
-                                                                        left: 0,
-                                                                        zIndex: 10000,
-                                                                        width: "100%",
-                                                                        boxShadow: "0 4px 12px rgba(0, 0, 0, 0.2)",
-                                                                        borderRadius: "4px",
-                                                                        backgroundColor: "#fff",
-                                                                        border: "1px solid #dee2e6",
-                                                                    }}
                                                                 >
                                                                     {form.icdOptions.map((meditem) => (
                                                                         <li
@@ -1223,7 +1470,17 @@ const Pat_checks_fordisease_create_ball = ({ handleLogout }) => {
                                                                             onClick={() => handleMeditemSelect(tab, formIndex, meditem)}
                                                                         >
                                                                             <div>
-                                                                                <strong>{meditem.name}</strong>
+                                                                                <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                                                                    <i className="bi bi-capsule" style={{ color: '#2563eb' }} />
+                                                                                    <span style={{
+                                                                                        fontSize: '1.05rem',
+                                                                                        fontWeight: '500',
+                                                                                        color: '#1e40af',
+                                                                                        backgroundColor: '#dbeafe',
+                                                                                        padding: '2px 8px',
+                                                                                        borderRadius: '4px'
+                                                                                    }}>{meditem.name}</span>
+                                                                                </div>
                                                                                 <div className="d-flex gap-2 mt-1">
                                                                                     <span>รหัส: {meditem.stdcode}</span>
                                                                                     <span>ราคา: {meditem.price} บาท</span>
@@ -1242,7 +1499,7 @@ const Pat_checks_fordisease_create_ball = ({ handleLogout }) => {
                                                                     value={form.dosage}
                                                                     onChange={(e) => handleChange(tab, formIndex, "dosage", e.target.value)}
                                                                     className="form-control"
-                                                                    placeholder="ขนาดยา"
+                                                                    placeholder="รหัสวิธีใช้"
                                                                 />
                                                                 <label htmlFor={`rx-dosage-${formIndex}`}>รหัสวิธีใช้</label>
                                                             </div>
@@ -1310,25 +1567,29 @@ const Pat_checks_fordisease_create_ball = ({ handleLogout }) => {
                                                             {form.icdOptions && form.icdOptions.length > 0 && (
                                                                 <ul
                                                                     className="list-group dropdown-menu show"
-                                                                    style={{
-                                                                        position: "absolute",
-                                                                        top: "100%",
-                                                                        left: 0,
-                                                                        zIndex: 10000,
-                                                                        width: "100%",
-                                                                        boxShadow: "0 4px 12px rgba(0, 0, 0, 0.2)",
-                                                                        borderRadius: "4px",
-                                                                        backgroundColor: "#fff",
-                                                                        border: "1px solid #dee2e6",
-                                                                    }}
                                                                 >
                                                                     {form.icdOptions.map((lab) => (
                                                                         <li
                                                                             key={lab.id}
                                                                             className="list-group-item list-group-item-action py-2"
                                                                             onClick={() => handLabelect(tab, formIndex, lab)}
+                                                                            style={{ cursor: 'pointer' }}
                                                                         >
-                                                                            <strong>{lab.labname}</strong> - ราคา {lab.pricelab} บาท
+                                                                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                                                                <i className="bi bi-file-medical" style={{ color: '#0891b2' }} />
+                                                                                <div>
+                                                                                    <div style={{
+                                                                                        color: '#0f172a',
+                                                                                        fontSize: '1.05rem',
+                                                                                        fontWeight: '500',
+                                                                                        marginBottom: '2px'
+                                                                                    }}>{lab.labname}</div>
+                                                                                    <div style={{
+                                                                                        color: '#64748b',
+                                                                                        fontSize: '0.9rem'
+                                                                                    }}>ราคา {lab.pricelab} บาท</div>
+                                                                                </div>
+                                                                            </div>
                                                                         </li>
                                                                     ))}
                                                                 </ul>
@@ -1400,25 +1661,38 @@ const Pat_checks_fordisease_create_ball = ({ handleLogout }) => {
                                                             {form.icdOptions && form.icdOptions.length > 0 && (
                                                                 <ul
                                                                     className="list-group dropdown-menu show"
-                                                                    style={{
-                                                                        position: "absolute",
-                                                                        top: "100%",
-                                                                        left: 0,
-                                                                        zIndex: 10000,
-                                                                        width: "100%",
-                                                                        boxShadow: "0 4px 12px rgba(0, 0, 0, 0.2)",
-                                                                        borderRadius: "4px",
-                                                                        backgroundColor: "#fff",
-                                                                        border: "1px solid #dee2e6",
-                                                                    }}
                                                                 >
                                                                     {form.icdOptions.map((rxay) => (
                                                                         <li
                                                                             key={rxay.id}
-                                                                            className="list-group-item list-group-item-action py-2"
+                                                                            className="list-group-item p-0 mb-2 border-0"
                                                                             onClick={() => handRxayelect(tab, formIndex, rxay)}
                                                                         >
-                                                                            <strong>{rxay.xryname}</strong> - ราคา {rxay.pricexry} บาท
+                                                                            <div style={{
+                                                                                cursor: 'pointer',
+                                                                                padding: '12px',
+                                                                                borderRadius: '8px',
+                                                                                border: '1px solid #e2e8f0',
+                                                                                ':hover': {
+                                                                                    borderColor: '#cbd5e1'
+                                                                                }
+                                                                            }}>
+                                                                                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                                                                    <i className="fas fa-x-ray fa-lg text-info me-1"></i>
+                                                                                    <div>
+                                                                                        <div style={{
+                                                                                            color: '#0f172a',
+                                                                                            fontSize: '1.05rem',
+                                                                                            fontWeight: '500',
+                                                                                            marginBottom: '2px'
+                                                                                        }}>{rxay.xryname}</div>
+                                                                                        <div style={{
+                                                                                            color: '#64748b',
+                                                                                            fontSize: '0.9rem'
+                                                                                        }}>ราคา {rxay.pricexry} บาท</div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
                                                                         </li>
                                                                     ))}
                                                                 </ul>
@@ -1471,15 +1745,73 @@ const Pat_checks_fordisease_create_ball = ({ handleLogout }) => {
 
             {savedData && Object.keys(savedData.data).length > 0 && (
                 <div className="saved-data-container mt-4">
-                    <button
-                        type="button"
-                        className="btn btn-success w-100 py-2 mb-3"
-                        onClick={() => Update(patientData.queue_id)}
-                        disabled={!savedData || Object.keys(savedData.data).length === 0}
+                    <Modal
+                        show={savedData}
+                        backdrop="static"
+                        keyboard={false}
+                        className="custom-modal"
+                        style={{
+                            '--bs-modal-border-radius': '20px', // เพิ่ม radius เพื่อความสวยงามใน Modal ขนาดใหญ่
+                        }}
+                        dialogClassName="modal-extra-large"
                     >
-                        <i className="bi bi-cloud-upload me-2"></i> ยืนยันการส่งข้อมูล
-                    </button>
-                    <DisplayData savedData={savedData} />
+                        <Modal.Header
+                            className="border-0 pb-2"
+                            style={{
+                                background: 'linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)',
+                                borderRadius: '20px 20px 0 0',
+                                padding: '1.5rem 2rem', // เพิ่ม padding เพื่อความสมดุล
+                            }}
+                        >
+                            <Modal.Title className="w-100 text-center fw-bold " style={{ fontSize: '1.75rem' }}>
+                                <h1 className="report-title">
+                                    <i className="bi bi-file-earmark-medical me-3"></i>
+                                    สรุปผลการตรวจ
+                                </h1>
+
+                            </Modal.Title>
+                        </Modal.Header>
+                        <Modal.Body
+                            className=""
+                            style={{
+                                background: '#f8f9fa',
+                                maxHeight: '80vh', // จำกัดความสูงเพื่อให้เลื่อนได้
+                                overflowY: 'auto', // อนุญาตให้เลื่อน
+                            }}
+                        >
+                            <div className="card border-0 shadow-sm rounded-3">
+                                {/* <div className="card-body p-5"> */}
+                                {/* <h4 className="text-primary text-center" style={{ fontSize: '1.5rem' }}>
+                                        <i className="bi bi-clipboard-check me-2 "></i> ข้อมูลที่บันทึก
+                                    </h4> */}
+                                <DisplayDataxx savedData={savedData} />
+                                {/* </div> */}
+                            </div>
+                        </Modal.Body>
+                        <Modal.Footer
+                            className="border-0 pt-0 "
+                            style={{
+                                background: 'linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)',
+                                borderRadius: '0 0 20px 20px',
+                                padding: '1.5rem 2rem',
+                            }}
+                        >
+                            <button
+                                type="button"
+                                className="btn btn-outline-secondary px-5 py-2"
+                                onClick={() => setSavedData(null)}
+                            >
+                                <i className="bi bi-x-circle me-2"></i> แก้ไขข้อมูล
+                            </button>
+                            <button
+                                type="button"
+                                className="btn btn-primary px-5 py-2"
+                                onClick={() => Update(patientData.queue_id)}
+                            >
+                                <i className="bi bi-save me-2"></i> บันทึกข้อมูล
+                            </button>
+                        </Modal.Footer>
+                    </Modal>
                 </div>
             )}
         </div>

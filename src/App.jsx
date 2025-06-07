@@ -21,7 +21,16 @@ import LabInternal from "./component/pages/MedecalTech/LabInternal";
 import LabExternal from "./component/pages/MedecalTech/LabExternal";
 import Pat_checks_fordisease from "./component/pages/Pat_checks_fordisease/Pat_checks_fordisease";
 import Pat_checks_fordisease_create from "./component/pages/Pat_checks_fordisease/Pat_checks_fordisease_create";
+
+
+// 
 import Pat_checks_fordisease_create_ball from "./component/pages/Pat_checks_fordisease/Pat_checks_fordisease_create_ball";
+import Pat_checks_fordisease_create_admin3 from "./component/pages/Pat_checks_fordisease/Pat_checks_fordisease_create_admin3";
+import Pat_checks_fordisease_create_Beam from "./component/pages/Pat_checks_fordisease/Pat_checks_fordisease_create_Beam";
+
+
+
+
 
 import Listdrugallergies from "./component/pages/Registration/Listdrugallergies";
 import Treatmenthistory from "./component/pages/Registration/Treatmenthistory";
@@ -255,10 +264,26 @@ function App() {
         }
       />
       <Route
-        path="/pat_checks_fordisease/create_bal"
+        path="/pat_checks_fordisease/create_ball"
         element={
           <Layout isSidebarOpen={isSidebarOpen} toggleSidebar={toggleSidebar}>
             <Pat_checks_fordisease_create_ball handleLogout={handleLogout} />
+          </Layout>
+        }
+      />
+      <Route
+        path="/pat_checks_fordisease/create_Beam"
+        element={
+          <Layout isSidebarOpen={isSidebarOpen} toggleSidebar={toggleSidebar}>
+            <Pat_checks_fordisease_create_Beam handleLogout={handleLogout} />
+          </Layout>
+        }
+      />
+      <Route
+        path="/pat_checks_fordisease/create_admin3"
+        element={
+          <Layout isSidebarOpen={isSidebarOpen} toggleSidebar={toggleSidebar}>
+            <Pat_checks_fordisease_create_admin3 handleLogout={handleLogout} />
           </Layout>
         }
       />
